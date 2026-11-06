@@ -79,7 +79,7 @@ $env:SYNKAI_DOCKER_TESTS = '1'
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-The November 6 verification run passed **61 backend tests**, including real Docker, **5 UI logic tests**, and the production build. A Starlette/httpx upstream deprecation warning remains visible. GitHub Actions checks the backend and interface. Automated tests do not substitute for the recorded live Switch run.
+The November 6 verification run passed **65 backend tests**, including real Docker, **5 UI logic tests**, and the production build. A Starlette/httpx upstream deprecation warning remains visible. GitHub Actions checks the backend and interface. Automated tests do not substitute for the recorded live Switch run.
 
 ## Boundaries
 

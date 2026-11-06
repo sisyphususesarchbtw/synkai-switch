@@ -59,7 +59,7 @@ The [repository README](../README.md) contains the full setup. Install the commi
 
 Sign in using the generated private local login file. Report the coupon defect, approve the proposed behavior in the room, inspect the patch and checks, then accept it if satisfied. Existing credentials and agent registrations survive setup restarts. A separate labelled fixture view also demonstrates a deliberately weakened-test false fix being rejected without calling a model.
 
-The public repository includes the real patch, a two-commit Git bundle, redacted execution evidence and the independent harness. Local verification passed 61 backend tests including Docker execution, five UI logic tests and the production build. [Evaluation](evaluation.md) describes the limits and provenance.
+The public repository includes the real patch, a two-commit Git bundle, redacted execution evidence and the independent harness. Local verification passed 65 backend tests including Docker execution, five UI logic tests and the production build. [Evaluation](evaluation.md) describes the limits and provenance.
 
 ## What I would improve next
 

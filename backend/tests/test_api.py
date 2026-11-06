@@ -76,3 +76,28 @@ def test_live_model_count_reports_attempts_instead_of_fixture_zero(tmp_path):
     WorkflowState(tmp_path/'switch/workflow.sqlite').update('case',attempts=2)
     with client(tmp_path) as app:
         assert app.get('/api/state').json()['model_calls']==2
+
+
+def test_changed_live_repository_or_base_expires_current_evidence(tmp_path):
+    import json
+    from synkai.api import ROOT
+    from synkai.runner import harness_digest
+    from synkai.store import Store
+    case=prepare_live(tmp_path)
+    config_path=tmp_path/'switch/runtime-config.json'
+    config=json.loads(config_path.read_text())
+    config.update(repo_root=str(tmp_path.resolve()),base_sha='base')
+    config_path.write_text(json.dumps(config))
+    store=Store(tmp_path/'cases.sqlite')
+    store.set_candidate(case['id'],'candidate',0)
+    store.save_run(case['id'],'run','fingerprint','VERIFIED',{'candidate':'candidate','identity':{
+        'repo':str(tmp_path.resolve()),'base':'base','harness':harness_digest(ROOT/'runner/harness'),'image':'image'}})
+    class ReadyRunner:
+        def status(self): return {'ready':True,'message':'ready'}
+        def image_identity(self): return 'image'
+    with TestClient(create_app(tmp_path,ReadyRunner()),base_url='http://localhost') as app:
+        assert app.get('/api/state').json()['cases'][0]['current_outcome']=='VERIFIED'
+        config['base_sha']='another-base'; config_path.write_text(json.dumps(config))
+        assert app.get('/api/state').json()['cases'][0]['current_outcome']=='STALE'
+        config['base_sha']='base'; config['repo_root']=str(tmp_path/'different'); config_path.write_text(json.dumps(config))
+        assert app.get('/api/state').json()['cases'][0]['current_outcome']=='STALE'

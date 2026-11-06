@@ -40,6 +40,8 @@ class Runtime:
         self.bus = BridgeState(data_dir / 'switch/runtime.sqlite')
         self.work = WorkflowState(data_dir / 'switch/workflow.sqlite')
         self.store = Store(data_dir / 'cases.sqlite')
+        for case in self.work.all():
+            self.assert_case_identity(case)
         self.runner = DockerRunner()
         self.coder = CodingProvider(auth_file, data_dir / 'candidates')
         self.context_lock = asyncio.Lock()
@@ -47,12 +49,31 @@ class Runtime:
             'verifier': SwitchBridge(settings.switch_url, settings.verifier_id, settings.verifier_key.get_secret_value(), settings.room_id, self.bus),
             'fixer': SwitchBridge(settings.switch_url, settings.fixer_id, settings.fixer_key.get_secret_value(), settings.room_id, self.bus)}
 
+    def assert_case_identity(self, case):
+        selected=self.store.get_case(case['ui_case_id'])
+        if case['base']!=self.base or selected['base']!=case['base']:
+            raise ValueError('Configured base differs from the approved case; a separate approved evaluation is required')
+        repository=case.get('repo_root')
+        if not repository and case.get('approval_message_id'):
+            # Migrate only from an immutable recorded run, never from a new configuration.
+            identity=selected['runs'][-1]['evidence'].get('identity',{}) if selected['runs'] else {}
+            if identity.get('base')==case['base']:
+                repository=identity.get('repo')
+            if not repository:
+                raise ValueError('The approved repository identity is missing; inspect the original record')
+        repository=repository or str(self.settings.repo_root)
+        if Path(repository).resolve()!=self.settings.repo_root.resolve():
+            raise ValueError('Configured repository differs from the approved case; a separate approved evaluation is required')
+        if not case.get('repo_root'):
+            self.work.update(case['id'],repo_root=str(Path(repository).resolve()))
+
     def proposal(self, event):
         existing = self.work.all()
         if existing:
             return existing[0]
         case = self.store.create_case(BEHAVIOR, self.base)
         return self.work.propose(self.case_ref, room_id=self.settings.room_id, operator_ids=self.settings.operator_ids,
+            repo_root=str(self.settings.repo_root),
             base=self.base, check_hash=harness_digest(ROOT/'runner/harness'), report_id=event['payload']['message_id'],
             report=event['payload']['body'], behavior=BEHAVIOR, ui_case_id=case['id'], source_room_url=self.room_url)
 
@@ -95,6 +116,7 @@ class Runtime:
         return await self.send(origin,command_id,f'@synkai-{target}\nSYNKAI_COMMAND\n'+json.dumps(payload))
 
     def freeze_and_reproduce(self, case):
+        self.assert_case_identity(case)
         folder = self.data/'live'/case['id']
         harness = folder/'harness'
         if not harness.exists():
@@ -111,8 +133,11 @@ class Runtime:
         self.work.update(case['id'], base_result=record, runner_image=image, harness=str(harness), status='CHECK_FROZEN')
 
     def verify(self, case):
+        self.assert_case_identity(case)
         started = time.monotonic()
         patch = case['patch']
+        if self.store.get_case(case['ui_case_id'])['candidate']!=patch['candidate']:
+            raise ValueError('Candidate changed before verification')
         candidate_repo = Path(patch['repo'])
         validate_candidate(candidate_repo, self.base, patch['candidate'])
         harness = Path(case['harness'])
@@ -145,9 +170,7 @@ class Runtime:
         if harness_digest(harness) != case['check_hash']:
             outcome = 'INCONCLUSIVE'
         evidence['elapsed_ms'] = round((time.monotonic()-started)*1000)
-        current = self.store.get_case(case['ui_case_id'])
-        self.store.set_candidate(current['id'],patch['candidate'],current['revision'])
-        self.store.save_run(current['id'],run_id,fingerprint,outcome,evidence)
+        self.store.save_run(case['ui_case_id'],run_id,fingerprint,outcome,evidence)
         self.work.update(case['id'],status='AWAITING_REVIEW' if outcome=='VERIFIED' else outcome,
                          outcome=outcome,run_id=run_id,stage='Complete',evidence=evidence)
         return outcome
@@ -165,6 +188,7 @@ class Runtime:
                     await self.send('verifier','proposal-'+case['id'],f"Proposed behavior for {case['id']}: {BEHAVIOR} I will also check zero-percent coupons and an empty cart. This is the authored checkout example. Check: {case['check_hash'][:12]}. To approve, send @synkai-verifier approve {case['id']}.")
                 return True
             case = cases[0]
+            self.assert_case_identity(case)
             if self.work.authorize_retry(case['id'],event,current_check=harness_digest(ROOT/'runner/harness')):
                 await self.handoff('repair',self.work.get(case['id']),attempt=case['attempts']+1)
                 return True
@@ -177,7 +201,8 @@ class Runtime:
                 return True
             text = re.sub(r'^\s*@[\w.-]+\s+','',payload.get('body','')).strip().lower()
             if text == 'accept '+case['id'] and case['status']=='AWAITING_REVIEW':
-                current = self.store.get_case(case['ui_case_id'],{'harness':harness_digest(ROOT/'runner/harness'),'image':self.runner.image_identity()})
+                current = self.store.get_case(case['ui_case_id'],{'harness':harness_digest(ROOT/'runner/harness'),
+                    'image':self.runner.image_identity(),'repo':str(self.settings.repo_root),'base':self.base})
                 if current['current_outcome'] != 'VERIFIED':
                     raise ValueError('Evidence changed; acceptance requires fresh verification')
                 self.work.update(case['id'],status='CLOSED',accepted_by=payload['sender'],acceptance_message_id=payload['message_id'])
@@ -189,6 +214,7 @@ class Runtime:
             # A message may reach the socket before its HTTP receipt reaches the sender.
             return 'SYNKAI_COMMAND\n' not in payload.get('body','')
         case = self.work.get(command['case_id'])
+        self.assert_case_identity(case)
         if command['base'] != case['base']:
             raise ValueError('Handoff base does not match the approved case')
         if agent=='fixer' and command['action']=='repair':
@@ -196,6 +222,9 @@ class Runtime:
             await self.send('fixer',case['id']+f':coding:{attempt}',f"I am creating candidate {attempt} from the approved base. The verifier's check is outside my workspace.")
             patch = await asyncio.to_thread(self.coder.propose,self.settings.repo_root,self.base,case['behavior'],
                 attempt=attempt,feedback=case.get('feedback',''))
+            validate_candidate(Path(patch['repo']),case['base'],patch['candidate'])
+            current=self.store.get_case(case['ui_case_id'])
+            self.store.set_candidate(current['id'],patch['candidate'],current['revision'])
             self.work.update(case['id'],status='CANDIDATE_READY',patch=patch)
             await self.handoff('candidate_ready',self.work.get(case['id']))
         elif agent=='verifier' and command['action']=='candidate_ready' and case['status']=='CANDIDATE_READY':
