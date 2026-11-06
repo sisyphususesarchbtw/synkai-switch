@@ -17,6 +17,11 @@ artifacts/
 *.sqlite3
 *.db
 *.log
+.local/
+.cache/
+.superpowers/
+*.egg-info/
+*.tsbuildinfo
 # Capture privately first; add only curated evidence explicitly
 docs/evidence/private/
 .DS_Store

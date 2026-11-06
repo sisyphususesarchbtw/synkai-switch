@@ -1,56 +1,65 @@
 # Synkai
 
-**Your CI is green. Your bug is still there.**
+An evidence workspace for checking whether a proposed code change fixes the agreed behavior.
 
-A Switch collaboration room for verifying AI-written bug fixes.
+The first case is a checkout bug: a 10% coupon is applied twice. One candidate changes its own test to accept the wrong total. Another repairs the implementation. Synkai runs the same independent check against the original revision and the candidate, then checks adjacent behavior.
 
-The name and supplied artwork come from the participant's brainstorming. The interface direction is raw monochrome, engraved classical imagery, serif typography and minimal artwork throughout the working room.
+## Current build
 
-Built solo by **Stillpoint** for the Flip the Switch Hackathon, November 4–7, 2026.
+- React workspace with candidate selection, immutable execution history and raw evidence.
+- FastAPI service and SQLite case storage; session-protected local actions.
+- Controlled fixture containing real Git commits, created on demand.
+- Docker worker with read-only source/check mounts, no network, CPU/memory/time limits.
+- Evidence bound to the candidate, original revision, check digest and container image. Changed inputs expire previous evidence; contradictory replays remain inconclusive.
 
-[GitHub repository](https://github.com/sisyphususesarchbtw/synkai-switch)
+**Status:** the service and UI run locally. Backend tests and UI status tests pass. Real container execution is pending a working Docker engine on the development machine. Live Switch handoffs and coding-agent integration are the next milestone; they are not implemented or simulated in this build. This is a verification foundation, not yet a complete hackathon entry.
 
-## Status
+## Run locally
 
-Planning repository. Product implementation has not started. There is no working integration, verification runner, or UI yet. Documentation describes the intended build; it is not a claim of shipped capability.
+Requires Python 3.12+, Node 22.18+, Git, and Docker Desktop with Linux containers. Docker is needed for verification, but the workspace can start without it.
 
-## The problem
+Windows PowerShell, from the repository root:
 
-A green test suite does not necessarily demonstrate that a reported bug was fixed. An agent can change the test, fail to reproduce the original behavior, or report a result from an older patch. Synkai is designed to turn a claimed fix into a small, inspectable evidence packet.
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.lock
+.\.venv\Scripts\python.exe -m pip install -e . --no-deps
+npm.cmd --prefix web ci
+npm.cmd --prefix web run build
+.\scripts\start.ps1
+```
 
-## Intended workflow
+Open [the local workspace](http://127.0.0.1:8787/). Prepare the case to create its local Git history. Then start Docker Desktop and build the worker:
 
-1. A person confirms expected behavior in team chat through Switch.
-2. A verifier freezes a behavioral check and reproduces the defect on the original revision.
-3. A fixing agent proposes a patch in a separate workspace.
-4. An independent runner executes the unchanged check on both revisions.
-5. The person reviews evidence, uncertainties, and the resulting patch.
+```powershell
+.\scripts\build-runner.ps1
+```
 
-Switch carries the real collaboration and agent handoffs. Synkai's UI will show the case state and evidence, with a link back to its source room.
+Verify the **Test-only change**, then the **Behavioral repair**. Their expected independent outcomes are rejected and verified respectively; those outcomes have not yet been observed in Docker on the development machine. An unavailable engine disables execution and leaves existing records readable.
 
-**A verified result applies only to the recorded check, environment, and revisions. It is not a guarantee of general correctness or security.**
+On Windows, enabling Virtual Machine Platform may require a full Windows restart before Docker works. Restarting Docker alone is insufficient. See [Docker's WSL setup](https://docs.docker.com/desktop/features/wsl/).
 
-## Build documents
+## Checks
 
-- [Product brief](PRODUCT.md)
-- [Visual direction](DESIGN.md)
-- [Design specification](docs/superpowers/specs/2026-11-06-synkai-design.md)
-- [Implementation plan](docs/superpowers/plans/2026-11-06-synkai.md)
-- [Task board](TASKS.md)
-- [Competitive strategy and evaluation](docs/strategy-and-evaluation.md)
-- [Original supplied artwork and assessment](assets/brand/README.md)
-- [Build journal](docs/build-journal.md)
-- [Blog draft](docs/blog.md)
-- [Submission checklist](docs/submission.md)
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+npm.cmd --prefix web test
+npm.cmd --prefix web run build
+```
 
-## Entries
+Tests cover false fixes, placebo checks, runtime errors, stale inputs, conflicting replays, persistence, local API protections, frozen harness snapshots and candidate-specific UI status. They do not substitute for a real container or Switch run. GitHub Actions runs the backend tests and interface checks on pushes and pull requests.
 
-Best Business Workflow, Code with Wispr, and Best Blog. Wispr usage evidence will come from actual Insights data. No submission has been made.
+## Layout
 
-Core Contribution is conditional on a legitimate eligible assignment and main-build readiness. No issue has been claimed.
+| Path | Purpose |
+| --- | --- |
+| `backend/src/synkai` | Local API, evidence rules, storage and Docker execution |
+| `backend/tests` | Behavior and regression tests |
+| `runner` | Container definition and verifier-owned check/reporting harness |
+| `web` | React/TypeScript workspace |
+| `scripts` | Local startup and runner build |
+| `assets/brand` | Original artwork and approved paired-bracket mark |
 
-## Inspiration
+Local fixture repositories, execution snapshots and SQLite state are stored in ignored `.local/`. Credentials and generated dependencies are excluded from Git. The current worker supports only this controlled Python fixture; it is not a general service for hostile code. A verified result applies to its recorded checks and inputs, not general program correctness.
 
-[Switch](https://docs.switchagents.ai/), [Amoeba](https://useamoeba.com/), [Ryoku](https://ryoku.dev/), and [Hermes Agent](https://hermes-agent.nousresearch.com/). Synkai is an independent hackathon project and is not affiliated with these products.
-
-Setup instructions and a real demo will be added after their steps have been tested.
+Built by Stillpoint for [Flip the Switch](https://www.wemakedevs.org/hackathons/switch).
