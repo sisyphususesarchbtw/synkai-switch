@@ -1,0 +1,2 @@
+# The approved verifier digest must be stable across Windows/Linux checkouts.
+/runner/harness/** text eol=lf
