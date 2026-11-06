@@ -1,0 +1,84 @@
+{
+  "scenario": "Authored checkout, live Switch, actual model-generated proposal",
+  "redactions": [
+    "Local filesystem prefixes replaced. Original execution fingerprint retained; it does not hash the redacted identity."
+  ],
+  "original_evidence_sha256": "b28df3b1a81e72c94111ac8f7da1b6132127be298ebc6b193eba7e7a4e1a615e",
+  "record": {
+    "identity": {
+      "repo": "<local-workspace>\\.local\\fixture-repository",
+      "base": "e96334c8262eabdf6fde5c0c47a7d8bcff22a3cd",
+      "candidate": "87ea36f955dd8d32843a30f9edddce3ea77179ff",
+      "harness": "389a7c4207820da51c8def2ce434e29a062bcc65817d8c7f35c60fd51bfb9cc6",
+      "image": "sha256:2c687e3d83f9910c7e5f777135a7ad86a249cec4e2aa4ab60a4b30b2b40e64e5",
+      "environment": "no-network/readonly/1cpu/512m"
+    },
+    "base": "e96334c8262eabdf6fde5c0c47a7d8bcff22a3cd",
+    "candidate": "87ea36f955dd8d32843a30f9edddce3ea77179ff",
+    "image": "sha256:2c687e3d83f9910c7e5f777135a7ad86a249cec4e2aa4ab60a4b30b2b40e64e5",
+    "fingerprint": "ac15bac04bb961db08cd7d74f4164feb54bbb16a5d4327c4d09f5ba7e197f275",
+    "fixture": true,
+    "live_agents": true,
+    "model_calls": 2,
+    "coding": {
+      "repo": "<local-workspace>\\.local\\candidates\\982db0e3641d476cb710b723afc45ff9",
+      "candidate": "87ea36f955dd8d32843a30f9edddce3ea77179ff",
+      "base": "e96334c8262eabdf6fde5c0c47a7d8bcff22a3cd",
+      "image": "sha256:27188eb154787860f018ff5acd6f1d5b9bbe4b9a9886c414f8d824c29eb43cef",
+      "elapsed_ms": 17183,
+      "invocations": 1,
+      "usage": {
+        "input_tokens": 14504,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 74,
+        "reasoning_output_tokens": 0
+      },
+      "cost": null,
+      "attempt": 2,
+      "method": "structured-source-proposal",
+      "summary": "Apply the coupon exactly once, yielding 9000 cents for a 10% coupon on 10000 cents while preserving zero-coupon and empty-cart behavior.",
+      "diff": "diff --git a/cart.py b/cart.py\nindex f47a5a4..21931d0 100644\n--- a/cart.py\n+++ b/cart.py\n@@ -1,3 +1,2 @@\n def total_after_coupon(cents, percent):\n-    discounted = cents * (100 - percent) // 100\n-    return discounted * (100 - percent) // 100\n+    return cents * (100 - percent) // 100"
+    },
+    "approval_message_id": "sw_4bfed92279d18e1fe5a1106ed9eb568e",
+    "approved_by": "@switch-mattermost-83bca842-dfef-4a81-b130-125b4cd02a8a-aditya:localhost",
+    "source_room_url": "http://localhost:8792/synkai/channels/synkai-evidence-room",
+    "stages": [
+      {
+        "name": "Original behavior",
+        "outcome": "failed",
+        "assertion": "test_coupon_applies_once",
+        "collected": 1,
+        "output": "F                                                                        [100%]\nSYNKAI_REPORT:{\"outcome\": \"failed\", \"assertion\": \"test_coupon_applies_once\", \"collected\": 1, \"skipped\": 0, \"errors\": 0}\n\n=================================== FAILURES ===================================\n___________________________ test_coupon_applies_once ___________________________\n\n    def test_coupon_applies_once():\n>       assert cart.total_after_coupon(10000, 10) == 9000, \"A 10% coupon on 10000 cents must leave 9000, not apply twice.\"\nE       AssertionError: A 10% coupon on 10000 cents must leave 9000, not apply twice.\nE       assert 8100 == 9000\nE        +  where 8100 = <function total_after_coupon at 0x725ef4759e40>(10000, 10)\nE        +    where <function total_after_coupon at 0x725ef4759e40> = cart.total_after_coupon\n\ncheck.py:10: AssertionError\n=========================== short test summary info ============================\nFAILED check.py::test_coupon_applies_once - AssertionError: A 10% coupon on 1...\n1 failed in 0.18s\n"
+      },
+      {
+        "name": "Candidate behavior",
+        "outcome": "passed",
+        "assertion": null,
+        "collected": 1,
+        "output": ".                                                                        [100%]\nSYNKAI_REPORT:{\"outcome\": \"passed\", \"assertion\": null, \"collected\": 1, \"skipped\": 0, \"errors\": 0}\n\n1 passed in 0.11s\n"
+      },
+      {
+        "name": "Adjacent behavior",
+        "outcome": "passed",
+        "assertion": null,
+        "collected": 2,
+        "output": "..                                                                       [100%]\nSYNKAI_REPORT:{\"outcome\": \"passed\", \"assertion\": null, \"collected\": 2, \"skipped\": 0, \"errors\": 0}\n\n2 passed in 0.09s\n"
+      }
+    ],
+    "elapsed_ms": 13111
+  },
+  "lifecycle": {
+    "id": "coupon-01",
+    "status": "AWAITING_REVIEW",
+    "attempts": 2,
+    "report_id": "sw_7ad1c38201e0c286967ce0a91ba2213c",
+    "approval_message_id": "sw_4bfed92279d18e1fe5a1106ed9eb568e",
+    "retry_message_id": "sw_ad3f568d4c113da0ee88def804217ac2",
+    "previous_errors": [
+      "Command '['git', '-C', '<local-workspace>\\\\.local\\\\candidates\\\\8a345fbe101444b79f0e4c562cfdaafe', 'commit', '-m', 'fix: satisfy the human-approved coupon behavior']' returned non-zero exit status 1."
+    ],
+    "check_hash": "389a7c4207820da51c8def2ce434e29a062bcc65817d8c7f35c60fd51bfb9cc6"
+  },
+  "retry_origin": "Operator explicitly delegated the room retry to the assistant in Codex chat; origin noted in the room."
+}

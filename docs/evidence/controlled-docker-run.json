@@ -1,0 +1,100 @@
+{
+  "mode": "controlled-fixture",
+  "live_switch": false,
+  "runs": [
+    {
+      "candidate_type": "false-fix",
+      "execution_id": "72099820a23d439ca17ae0a08f70b9cc",
+      "outcome": "REJECTED",
+      "created_at": "2026-11-06T09:26:33.019842+00:00",
+      "evidence": {
+        "base": "e96334c8262eabdf6fde5c0c47a7d8bcff22a3cd",
+        "candidate": "f0163b0ee36504097e715ea35d20c2b3f430f546",
+        "elapsed_ms": 8070,
+        "fingerprint": "496fab311d0fd7c7ae33601f830a798457558aa8f4921fddb868c95096af9b86",
+        "fixture": true,
+        "identity": {
+          "base": "e96334c8262eabdf6fde5c0c47a7d8bcff22a3cd",
+          "candidate": "f0163b0ee36504097e715ea35d20c2b3f430f546",
+          "environment": "no-network/readonly/1cpu/512m",
+          "harness": "389a7c4207820da51c8def2ce434e29a062bcc65817d8c7f35c60fd51bfb9cc6",
+          "image": "sha256:2c687e3d83f9910c7e5f777135a7ad86a249cec4e2aa4ab60a4b30b2b40e64e5",
+          "repo": "controlled-fixture (local path omitted)"
+        },
+        "image": "sha256:2c687e3d83f9910c7e5f777135a7ad86a249cec4e2aa4ab60a4b30b2b40e64e5",
+        "model_calls": 0,
+        "stages": [
+          {
+            "assertion": "test_coupon_applies_once",
+            "collected": 1,
+            "name": "Original behavior",
+            "outcome": "failed",
+            "output": "F                                                                        [100%]\nSYNKAI_REPORT:{\"outcome\": \"failed\", \"assertion\": \"test_coupon_applies_once\", \"collected\": 1, \"skipped\": 0, \"errors\": 0}\n\n=================================== FAILURES ===================================\n___________________________ test_coupon_applies_once ___________________________\n\n    def test_coupon_applies_once():\n>       assert cart.total_after_coupon(10000, 10) == 9000, \"A 10% coupon on 10000 cents must leave 9000, not apply twice.\"\nE       AssertionError: A 10% coupon on 10000 cents must leave 9000, not apply twice.\nE       assert 8100 == 9000\nE        +  where 8100 = <function total_after_coupon at 0x778a75805e40>(10000, 10)\nE        +    where <function total_after_coupon at 0x778a75805e40> = cart.total_after_coupon\n\ncheck.py:10: AssertionError\n=========================== short test summary info ============================\nFAILED check.py::test_coupon_applies_once - AssertionError: A 10% coupon on 1...\n1 failed in 0.14s\n"
+          },
+          {
+            "assertion": "test_coupon_applies_once",
+            "collected": 1,
+            "name": "Candidate behavior",
+            "outcome": "failed",
+            "output": "F                                                                        [100%]\nSYNKAI_REPORT:{\"outcome\": \"failed\", \"assertion\": \"test_coupon_applies_once\", \"collected\": 1, \"skipped\": 0, \"errors\": 0}\n\n=================================== FAILURES ===================================\n___________________________ test_coupon_applies_once ___________________________\n\n    def test_coupon_applies_once():\n>       assert cart.total_after_coupon(10000, 10) == 9000, \"A 10% coupon on 10000 cents must leave 9000, not apply twice.\"\nE       AssertionError: A 10% coupon on 10000 cents must leave 9000, not apply twice.\nE       assert 8100 == 9000\nE        +  where 8100 = <function total_after_coupon at 0x7ea61d6f1e40>(10000, 10)\nE        +    where <function total_after_coupon at 0x7ea61d6f1e40> = cart.total_after_coupon\n\ncheck.py:10: AssertionError\n=========================== short test summary info ============================\nFAILED check.py::test_coupon_applies_once - AssertionError: A 10% coupon on 1...\n1 failed in 0.14s\n"
+          },
+          {
+            "assertion": null,
+            "collected": 2,
+            "name": "Adjacent behavior",
+            "outcome": "passed",
+            "output": "..                                                                       [100%]\nSYNKAI_REPORT:{\"outcome\": \"passed\", \"assertion\": null, \"collected\": 2, \"skipped\": 0, \"errors\": 0}\n\n2 passed in 0.06s\n"
+          }
+        ]
+      },
+      "path_redacted": true
+    },
+    {
+      "candidate_type": "real-fix",
+      "execution_id": "f6188e9da5c5427aac54aee78d593231",
+      "outcome": "VERIFIED",
+      "created_at": "2026-11-06T09:26:42.369916+00:00",
+      "evidence": {
+        "base": "e96334c8262eabdf6fde5c0c47a7d8bcff22a3cd",
+        "candidate": "1c794c1a36246479507e2f577d086b48730fbd31",
+        "elapsed_ms": 8122,
+        "fingerprint": "c1e97a56369a60c25f20863e86796e46664d09e499422258f131b0614f787e4f",
+        "fixture": true,
+        "identity": {
+          "base": "e96334c8262eabdf6fde5c0c47a7d8bcff22a3cd",
+          "candidate": "1c794c1a36246479507e2f577d086b48730fbd31",
+          "environment": "no-network/readonly/1cpu/512m",
+          "harness": "389a7c4207820da51c8def2ce434e29a062bcc65817d8c7f35c60fd51bfb9cc6",
+          "image": "sha256:2c687e3d83f9910c7e5f777135a7ad86a249cec4e2aa4ab60a4b30b2b40e64e5",
+          "repo": "controlled-fixture (local path omitted)"
+        },
+        "image": "sha256:2c687e3d83f9910c7e5f777135a7ad86a249cec4e2aa4ab60a4b30b2b40e64e5",
+        "model_calls": 0,
+        "stages": [
+          {
+            "assertion": "test_coupon_applies_once",
+            "collected": 1,
+            "name": "Original behavior",
+            "outcome": "failed",
+            "output": "F                                                                        [100%]\nSYNKAI_REPORT:{\"outcome\": \"failed\", \"assertion\": \"test_coupon_applies_once\", \"collected\": 1, \"skipped\": 0, \"errors\": 0}\n\n=================================== FAILURES ===================================\n___________________________ test_coupon_applies_once ___________________________\n\n    def test_coupon_applies_once():\n>       assert cart.total_after_coupon(10000, 10) == 9000, \"A 10% coupon on 10000 cents must leave 9000, not apply twice.\"\nE       AssertionError: A 10% coupon on 10000 cents must leave 9000, not apply twice.\nE       assert 8100 == 9000\nE        +  where 8100 = <function total_after_coupon at 0x7573b29b1e40>(10000, 10)\nE        +    where <function total_after_coupon at 0x7573b29b1e40> = cart.total_after_coupon\n\ncheck.py:10: AssertionError\n=========================== short test summary info ============================\nFAILED check.py::test_coupon_applies_once - AssertionError: A 10% coupon on 1...\n1 failed in 0.13s\n"
+          },
+          {
+            "assertion": null,
+            "collected": 1,
+            "name": "Candidate behavior",
+            "outcome": "passed",
+            "output": ".                                                                        [100%]\nSYNKAI_REPORT:{\"outcome\": \"passed\", \"assertion\": null, \"collected\": 1, \"skipped\": 0, \"errors\": 0}\n\n1 passed in 0.06s\n"
+          },
+          {
+            "assertion": null,
+            "collected": 2,
+            "name": "Adjacent behavior",
+            "outcome": "passed",
+            "output": "..                                                                       [100%]\nSYNKAI_REPORT:{\"outcome\": \"passed\", \"assertion\": null, \"collected\": 2, \"skipped\": 0, \"errors\": 0}\n\n2 passed in 0.06s\n"
+          }
+        ]
+      },
+      "path_redacted": true
+    }
+  ]
+}
