@@ -18,6 +18,8 @@ from .demo import export_snapshot, prepare_demo
 from .runner import DockerRunner, RunnerUnavailable, freeze_harness, harness_digest
 from .store import Conflict, Store
 from .verification import classify
+from .bridge import BridgeState
+from .workflow import WorkflowState
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -48,6 +50,24 @@ def create_app(data_dir: Path | None = None, runner: DockerRunner | None = None)
             probe.update(at=time.monotonic(), value=runner.status())
         return probe["value"]
 
+    def live_projection():
+        private = data_dir / 'switch'
+        path = private / 'workflow.sqlite'
+        live = WorkflowState(path).all() if path.exists() else []
+        agents = []
+        activity = []
+        config_path = private / 'runtime-config.json'
+        if config_path.exists() and (private/'runtime.sqlite').exists():
+            config = json.loads(config_path.read_text())
+            bus = BridgeState(private/'runtime.sqlite')
+            for name in ['fixer','verifier']:
+                session = bus.session(config[name+'_id'])
+                agents.append({'name':name.title(),'connected':bool(session['connected'] and time.time()-session['last_seen']<8)})
+            if live:
+                activity=bus.activity(live[0]['room_id'])
+        connected = len(agents)==2 and all(agent['connected'] for agent in agents)
+        return {'connected':connected,'agents':agents,'activity':activity,'message':'Both Switch identities are connected' if connected else 'The live workflow is offline or not configured'}, (live[0] if live else None)
+
     @app.get("/health")
     def health():
         return {"service": "synkai", "version": "0.1.0", "runner": runner_status()}
@@ -68,10 +88,11 @@ def create_app(data_dir: Path | None = None, runner: DockerRunner | None = None)
         except OSError:
             current_harness = None
         current_inputs = {"harness": current_harness, "image": image}
+        switch, live_case = live_projection()
         return {"cases": store.list_cases(current_inputs), "runner": status, "job": dict(job),
-                "switch": {"connected": False, "message": "No live Switch session is connected yet"},
-                "candidates": demo["candidates"] if demo else {}, "mode": "controlled-fixture",
-                "model_calls": 0, "cost": None}
+                "switch": switch, "live_case": live_case,
+                "candidates": demo["candidates"] if demo else {}, "mode": "live-switch" if live_case else "controlled-fixture",
+                "model_calls": live_case['attempts'] if live_case else 0, "cost": None}
 
     @app.post("/api/demo", dependencies=[Depends(authorize)])
     def demo():
@@ -127,6 +148,9 @@ def create_app(data_dir: Path | None = None, runner: DockerRunner | None = None)
                 case = store.get_case(case_id)
             except KeyError as exc:
                 raise HTTPException(404, "Case not found") from exc
+            _, live_case = live_projection()
+            if live_case and live_case.get('ui_case_id') == case_id:
+                raise HTTPException(409, 'Live verification is controlled through the Switch room.')
             if job.get("running"):
                 raise HTTPException(409, "A verification is already running.")
             if not runner_status()["ready"]:
