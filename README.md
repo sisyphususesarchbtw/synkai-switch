@@ -1,12 +1,14 @@
-# NYKT
+# Synkai
 
-**Clarity, earned.**
+**Your CI is green. Your bug is still there.**
 
 A Switch collaboration room for verifying AI-written bug fixes.
 
+The name and supplied artwork come from the participant's brainstorming. The interface direction is raw monochrome, engraved classical imagery, serif typography and minimal artwork throughout the working room.
+
 Built solo by **Stillpoint** for the Flip the Switch Hackathon, November 4–7, 2026.
 
-[GitHub repository](https://github.com/sisyphususesarchbtw/nykt-switch)
+[GitHub repository](https://github.com/sisyphususesarchbtw/synkai-switch)
 
 ## Status
 
@@ -14,7 +16,7 @@ Planning repository. Product implementation has not started. There is no working
 
 ## The problem
 
-A green test suite does not necessarily demonstrate that a reported bug was fixed. An agent can change the test, fail to reproduce the original behavior, or report a result from an older patch. NYKT is designed to turn a claimed fix into a small, inspectable evidence packet.
+A green test suite does not necessarily demonstrate that a reported bug was fixed. An agent can change the test, fail to reproduce the original behavior, or report a result from an older patch. Synkai is designed to turn a claimed fix into a small, inspectable evidence packet.
 
 ## Intended workflow
 
@@ -24,7 +26,7 @@ A green test suite does not necessarily demonstrate that a reported bug was fixe
 4. An independent runner executes the unchanged check on both revisions.
 5. The person reviews evidence, uncertainties, and the resulting patch.
 
-Switch carries the real collaboration and agent handoffs. NYKT's UI will show the case state and evidence, with a link back to its source room.
+Switch carries the real collaboration and agent handoffs. Synkai's UI will show the case state and evidence, with a link back to its source room.
 
 **A verified result applies only to the recorded check, environment, and revisions. It is not a guarantee of general correctness or security.**
 
@@ -32,10 +34,11 @@ Switch carries the real collaboration and agent handoffs. NYKT's UI will show th
 
 - [Product brief](PRODUCT.md)
 - [Visual direction](DESIGN.md)
-- [Design specification](docs/superpowers/specs/2026-11-06-nykt-design.md)
-- [Implementation plan](docs/superpowers/plans/2026-11-06-nykt.md)
+- [Design specification](docs/superpowers/specs/2026-11-06-synkai-design.md)
+- [Implementation plan](docs/superpowers/plans/2026-11-06-synkai.md)
 - [Task board](TASKS.md)
-- [Logo prompt](assets/brand/LOGO-PROMPT.md)
+- [Competitive strategy and evaluation](docs/strategy-and-evaluation.md)
+- [Original supplied artwork and assessment](assets/brand/README.md)
 - [Build journal](docs/build-journal.md)
 - [Blog draft](docs/blog.md)
 - [Submission checklist](docs/submission.md)
@@ -44,8 +47,10 @@ Switch carries the real collaboration and agent handoffs. NYKT's UI will show th
 
 Best Business Workflow, Code with Wispr, and Best Blog. Wispr usage evidence will come from actual Insights data. No submission has been made.
 
+Core Contribution is conditional on a legitimate eligible assignment and main-build readiness. No issue has been claimed.
+
 ## Inspiration
 
-[Switch](https://docs.switchagents.ai/), [Amoeba](https://useamoeba.com/), [Ryoku](https://ryoku.dev/), and [Hermes Agent](https://hermes-agent.nousresearch.com/). NYKT is an independent hackathon project and is not affiliated with these products.
+[Switch](https://docs.switchagents.ai/), [Amoeba](https://useamoeba.com/), [Ryoku](https://ryoku.dev/), and [Hermes Agent](https://hermes-agent.nousresearch.com/). Synkai is an independent hackathon project and is not affiliated with these products.
 
 Setup instructions and a real demo will be added after their steps have been tested.

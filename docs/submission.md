@@ -1,6 +1,6 @@
-# NYKT submission checklist
+# Synkai submission checklist
 
-Product: NYKT. Team: Stillpoint. Participant count: 1.
+Product: Synkai. Team: Stillpoint. Participant count: 1.
 Main track: Best Business Workflow. Additional entries: Code with Wispr; Best Blog.
 Deadline from event overview: November 7, 2026, 11:59 PM IST.
 

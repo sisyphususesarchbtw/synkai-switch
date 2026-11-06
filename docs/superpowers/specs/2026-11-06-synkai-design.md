@@ -1,10 +1,10 @@
-# NYKT design specification
+# Synkai design specification
 
 Date: November 6, 2026 IST. Status: proposed defaults finalized for implementation planning; product execution has not begun. Owner: solo participant, team Stillpoint.
 
 ## Why this exists
 
-Reviewing a claimed agent fix requires agreement on behavior and evidence that the exact patch changes it. NYKT combines a real Switch discussion with a verifier-controlled executable check. The demonstration must show useful work and honest uncertainty, not staged messages presented as live execution.
+Reviewing a claimed agent fix requires agreement on behavior and evidence that the exact patch changes it. Synkai combines a real Switch discussion with a verifier-controlled executable check. The demonstration must show useful work and honest uncertainty, not staged messages presented as live execution.
 
 ## Approaches considered
 
@@ -16,8 +16,8 @@ Within the chosen direction, a local Python service with a browser UI is the pro
 
 ## Fixed boundaries
 
-- Product NYKT; team Stillpoint; tagline Clarity, earned.; dark Zen interface per DESIGN.md.
-- Primary track Business Workflow; also Code with Wispr and Best Blog; no core contribution.
+- Product Synkai; team Stillpoint; raw monochrome/engraved visual direction per DESIGN.md; artwork minimal throughout. Name and supplied illustration come from the participant. No tagline is required in operational screens.
+- Primary track Business Workflow; also Code with Wispr and Best Blog; core contribution conditional on a valid assignment and main-build readiness.
 - Python 3.12+ for the service; Node 22+ for frontend tooling; exact available versions checked before dependency installation.
 - FastAPI + Pydantic + SQLite; React + TypeScript + Vite; Docker for verification jobs; pytest for the initial supported repository.
 - One trusted local operator, one allowlisted repository and one active verification at a time. Backend and UI bind to loopback by default.
@@ -47,7 +47,7 @@ Decision: id, case_id, run_id, actor_id, outcome, source_message_id, created_at.
 
 Case states: REPORTED -> NEEDS_INPUT -> CHECK_FROZEN -> REPRODUCING -> REPAIRING -> VERIFYING -> AWAITING_REVIEW -> CLOSED. An execution can end in VERIFIED, REJECTED or INCONCLUSIVE; evidence can subsequently be STALE. Run outcomes are not interchangeable with case lifecycle.
 
-Every state mutation uses an expected integer revision; stale writes fail. Deduplicate Switch deliveries by (room_id, event_id); deduplicate run requests by a hash of case, candidate, check bundle, image and environment. Persist event receipt and transition in the same SQLite transaction. A queued dispatch is persisted in an outbox and retried with its stable id; delivery acknowledgement is not proof of verification. Establish native Switch send idempotency during setup. Regardless of native support, include a stable NYKT command_id in structured handoffs and transactionally deduplicate (room_id, receiver_agent_id, command_id) before acting. A transport retry can create another message/event id but must not create another repair attempt or consume the budget. Task 1 must confirm Fixer's receiver wrapper can enforce this before invoking its coding CLI.
+Every state mutation uses an expected integer revision; stale writes fail. Deduplicate Switch deliveries by (room_id, event_id). Distinguish input identity from execution identity: input_fingerprint hashes case/repository/base/candidate/check/harness/image/environment; run.id is a fresh execution ID for each explicit verification or replay. A transport retry keeps the same execution ID and is deduplicated by (case_id, execution_id). An explicit replay creates a fresh execution ID with the same fingerprint and consumes no coding attempts or AI invocations. Persist event receipt and transition in the same SQLite transaction. A queued dispatch is persisted in an outbox and retried with its stable id; delivery acknowledgement is not proof of verification. Establish native Switch send idempotency during setup. Regardless of native support, include a stable Synkai command_id in structured handoffs and transactionally deduplicate (room_id, receiver_agent_id, command_id) before acting. A transport retry can create another message/event id but must not create another repair attempt or consume the budget. Task 1 must confirm Fixer's receiver wrapper can enforce this before invoking its coding CLI.
 
 ## Verification semantics
 
@@ -57,7 +57,9 @@ The runner-owned plugin/report schema records collection, skips, errors, asserti
 
 VERIFIED: expected base behavioral failure + candidate pass + required adjacent checks pass + all input identities match. REJECTED: reproducible candidate behavioral failure or confirmed adjacent regression. INCONCLUSIVE: neither result is justified, including check passes on base, skips, missing dependencies, interrupted execution or empty collection. A new candidate/check/environment invalidates the displayed current verification. This is empirical evidence, not formal proof.
 
-Budget: 60 seconds per container run, 1 CPU, 512 MiB memory, 64 processes, 64 KiB stdout/stderr per stream with explicit truncation metadata. At most one initial attempt plus one repair candidate. Stop and ask the human if that fails. New verification requires an explicit action; no always-on retry loop.
+Reconcile repeated executions sharing one input_fingerprint. Preserve each individual run outcome and artifact. If executable outcomes contradict one another on the same behavioral assertion, the fingerprint's aggregate outcome becomes INCONCLUSIVE with reason inconsistent_execution; remove the current Verified badge and require investigation. A later pass cannot erase contradictory history. Setup/timeout failures alone are incomplete evidence, not an assertion contradiction; display the new incomplete execution separately from prior historical success. Only a new input fingerprint and fresh coherent evidence can establish a new current Verified result after inconsistency.
+
+Budget: 60 seconds per container run, 1 CPU, 512 MiB memory, 64 processes, 64 KiB stdout/stderr per stream with explicit truncation metadata. At most one initial attempt plus one repair candidate. Stop and ask the human if that fails. Maximum three AI invocations per case: one optional check proposal and two coding attempts. Provider internal tool loops need a separate supported turn limit; display unavailable cost as unknown. Deterministic classification and replay make no model calls. New verification requires an explicit action; no always-on retry loop.
 
 ## Collaboration
 
@@ -74,7 +76,7 @@ All routes local-only; session secret held server-side with an HttpOnly SameSite
 - GET /health -> service, bridge state and worker availability.
 - GET /api/cases -> CaseSummary[].
 - GET /api/cases/{id} -> CaseDetail including evidence identity and source room URL.
-- GET /api/cases/{id}/events -> server-sent UI updates (this is NYKT UI transport, not deprecated Switch agent SSE).
+- GET /api/cases/{id}/events -> server-sent UI updates (this is Synkai UI transport, not deprecated Switch agent SSE).
 - POST /api/cases/{id}/actions -> {action, expected_revision, idempotency_key}; only allowlisted authenticated actions. Return 202 plus command id; room event confirms acceptance.
 - GET /api/runs/{id}/evidence -> evidence JSON.
 - GET /api/runs/{id}/artifacts/{artifact_id} -> manifest-resolved artifact only; no caller-provided filesystem paths.
@@ -91,6 +93,8 @@ Use project_id and case_id in durable records and artifact manifests; initially 
 
 ## Validation and presentation
 
+Apply docs/strategy-and-evaluation.md as the current competitive/evaluation brief. Required signature moments: detect a false candidate despite green repository tests; identify a placebo check that passes on original code; expose before/after evidence; invalidate current evidence after an input changes. Do not claim these established testing/CI concepts are exclusive inventions. Ship the workflow combination with reproducible measured results.
+
 Acceptance cases: false fix rejected, real fix verified, unknown/setup failure inconclusive, stale revision invalidates, duplicate event causes no duplicate run, other agents cannot approve checks, verifier checks unaffected by candidate test/config modifications, and room disconnect never reports successful command delivery.
 
 Measure real wall time, calls and model usage when available. Record unavailable costs as unknown. Test desktop 1440px and mobile 390px, keyboard focus, contrast, offline and inconclusive screens. Clean clone setup and a real Mattermost -> Switch -> Fixer -> Verifier -> human loop are required before claiming complete.
@@ -100,7 +104,7 @@ Blog and Wispr are parallel documentation work, not second products. Capture not
 ## Sources and limits
 
 - https://useamoeba.com/faq — ownership, visible sessions, commit-pinned shared context, takeover. Inspiration only; not building an IDE.
-- https://ryoku.dev/showroom — dark desktop reference. NYKT has its own tokens and layout.
+- https://ryoku.dev/showroom — dark desktop reference. Synkai has its own tokens and layout.
 - https://hermes-agent.nousresearch.com/docs/user-guide/features/web-dashboard — operator workspace reference.
 - https://docs.switchagents.ai/switch-rooms/internals/agent-protocol — current transport and addressing.
 - https://www.wemakedevs.org/hackathons/switch — tracks, deadline, Mattermost, side-entry evidence.

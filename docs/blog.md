@@ -1,4 +1,4 @@
-# Green Tests Aren't Enough: Building NYKT with Switch and Wispr
+# Your CI Is Green. Your Bug Is Still There: Building Synkai with Switch
 
 Status: editorial draft based on design decisions. Not yet a build report. Do not publish as a completed project until the evidence sections are written from actual execution.
 
@@ -8,7 +8,7 @@ When an AI coding agent says it fixed a bug, what would make that claim worth tr
 
 ## The workflow we are building
 
-NYKT brings a developer, a fixing agent and a verifier into a Switch room. The person resolves ambiguity about the behavior. The verifier freezes a small check. The fixer proposes a candidate. The same check runs on the old and new code, producing an evidence packet that the person can inspect.
+Synkai brings a developer, a fixing agent and a verifier into a Switch room. The person resolves ambiguity about the behavior. The verifier freezes a small check. The fixer proposes a candidate. The same check runs on the old and new code, producing an evidence packet that the person can inspect. The strongest opening will be an actual false candidate with passing repository tests and a still-failing independent check.
 
 That packet is deliberately narrow. It describes what was checked, against which revisions, in which environment, with what result. It does not certify that all other behavior is correct.
 

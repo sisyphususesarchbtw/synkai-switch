@@ -1,44 +1,36 @@
-# NYKT visual direction
+# Synkai visual brief
+Confirmed user direction, November 6, 2026: atmosphere throughout the working app; artwork minimal. This supersedes the earlier charcoal-and-brass direction. No application UI exists yet.
 
-Status: implementation direction; no screen mockup or final logo has been approved or built.
-Mode: Operate. Primary scene: reviewing one disputed bug fix at a desk.
+## Visual authority
+Every image in the participant's parent “ashtetics inspo” folder and the main LOGO.png has been inspected. The exact supplied logo is copied to assets/brand/LOGO.png without modification.
 
-## Dark Zen architecture
+Ryoku screenshots establish engraved/dithered classical imagery, large serif headings, thin rules and technical annotation. Amoeba informs visible ownership and cohesive collaboration. The grainy figure, wing and Indian mythology references establish contrast and atmosphere. References are not automatically cleared app assets.
 
-Near-black basalt, subtly distinct charcoal planes, warm ivory text and restrained oxidized brass. The interface should feel like a quiet instrument panel in a stone study. Greek influence is proportion and letterform discipline; Zen influence is space, rhythm and restraint; Indian influence is limited to a subtle seal-like geometry in branding. Keep interface labels literal and useful.
+## Character
+Raw monochrome print, classical sculpture, negative space, astronomical construction lines and restrained asymmetry: a printed observatory folio made operational. The previous green-charcoal panels, brass accents and default rounded cards missed the requested character.
 
-Reference: Ryoku's cohesive shell and subdued dark desktop treatments; Hermes' operator orientation; Amoeba's visible sessions, ownership and progress. Do not copy artwork, wordmarks, wallpaper, layout wholesale, pricing claims, or product functionality.
+Grain belongs in artwork and quiet margins. Keep controls, body text and evidence crisp. Place the supplied illustration in introduction/about or a spacious empty state, never behind every panel. Use a serif text wordmark in navigation until a small mark has been checked at icon size. Preserve the original artwork.
 
-## Proposed tokens
+## Tokens
+- canvas #090909; surface #111111; raised #181818
+- primary text #E8E5DE; secondary #B1ADA5; quiet #88847D; separators #343230
+- focus #E8E5DE; functional pass #A7BAA1, failure #D7A397, pending #CDBD96, always with text/icons
+- black and warm off-white dominate; no decorative accent color
+- display/identity: locally served open-licensed Cormorant Garamond or equivalent, Georgia fallback
+- body: locally served Geist or readable system sans; evidence: ui-monospace/Consolas
+- display 40–56px desktop, 30–36px mobile; body 15–16px; labels 12–13px
+- spacing 4px base, 8/12/16/24/32px intervals, 48px section space; radius 0–4px
+- purposeful transitions 120–180ms; reduced-motion support
 
-- canvas: #101211
-- surface: #171A18
-- raised: #1D211E
-- border: #343A34
-- text: #ECEAE2
-- muted text: #A7AEA4
-- accent: #C0A77A
-- verified: #A9C2A1
-- rejected: #E2A092
-- inconclusive: #D6BF87
-- body font: system sans-serif, no external font dependency
-- evidence font: ui-monospace, SFMono-Regular, Consolas, monospace
-- spacing base: 4px; common gaps 8, 12, 16, 24, 32
-- panel radius: 10px; controls 6px
-- motion: 140–180ms, opacity/transform only; honor reduced motion
+Actual rendered contrast still needs checking. Avoid thin interactive hit targets and noise under text.
 
-Verify actual contrast during implementation; proposed tokens are not accessibility certification. Status always has text and icon, never color alone.
+## Working screen
+One coherent room. Top: Synkai wordmark, project/revision, connection and actual budget data. Left: active cases and plain text states. Center: expected behavior, contested claim, current next action. Beneath: Original / Candidate evidence. Expandable lower section: real commands/logs/check identity. Right drawer: actual Switch thread and two agents with owner/status.
 
-## Case workspace
+A small numbered sequence earns its space: 01 intent, 02 original failure, 03 candidate result. No animated agent aquarium, 3D graph, fake confidence percentage, stock KPI grid, connector gallery, glow gradient, fictional customer strip, hype tagline or ornamental mythology labels.
 
-A narrow left rail lists cases and their states. The main area leads with the current question, expected behavior, revision and next action. A compact horizontal stage trail shows Report / Reproduce / Repair / Verify / Review. The evidence view has Base and Candidate results side by side on desktop and stacked on mobile. Source conversation opens in a contextual drawer, with the actual Switch room link visible. A small two-person agent roster shows Fixer / Verifier, owner, active/blocked/disconnected state and last update. No ornamental graph or metric grid.
+## Interaction
+Validate desktop at 1440px and mobile at 390px. Stack evidence on mobile; use a case selector/drawer instead of squeezed columns. Controls at least 44px tall. Preserve focus/scroll during updates. Outcomes always include text/icon/explanation. Offline retains historical evidence and prevents undispatched actions appearing accepted. Disagreement becomes a behavior to test or a question requiring a person.
 
-Primary views: /cases and /cases/:caseId. The initial application can open directly into a seeded case. A command palette is stretch scope.
-
-## Interaction requirements
-
-Keyboard focus visible; controls at least 40px tall; semantic buttons and headings. Evidence logs expand without losing scroll position. Streaming updates must not steal focus or move the action bar. A disconnected bridge gets an explicit banner and disables new requests. Last-known evidence stays readable and labelled. Mobile at 390px uses a case selector and stacked panels. Desktop check at 1440px. No glow clouds, particle backgrounds, fake terminal output, persistent pulsing, or mythological agent nicknames in controls.
-
-## Logo handoff
-
-User will generate a logo externally from assets/brand/LOGO-PROMPT.md and place results in assets/brand/incoming or the workspace. Inspect the actual files before adopting one. Prefer a clean SVG plus transparent PNG; preserve the original. Logo is never required to unlock development. Initial text wordmark is NYKT.
+## Components
+React/TypeScript/Vite. Selective Radix primitives via shadcn/ui for Dialog, Tabs and Tooltip, restyled to this brief; CSS tokens and a small icon set. v0 templates were inspected for composition ideas; a full agent-dashboard starter would dilute the supplied references. No extra animation library unless required. No UI implementation has started.

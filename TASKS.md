@@ -1,12 +1,16 @@
-# NYKT task board
+# Synkai task board
 
 ## Prepared
-- [x] Product name NYKT; team Stillpoint; dark Zen direction.
+- [x] Working product Synkai from participant's brainstorming; team Stillpoint.
+- [x] Inspect original LOGO.png and all 10 supplied reference images; preserve logo unchanged.
+- [x] Confirm atmosphere throughout the app, artwork minimal; replace the earlier generic charcoal-and-brass brief.
+- [x] Recheck public competitor builds, current rules/resources and eligible core issue availability.
+- [x] Freeze the hook, focused USP, negative-case matrix and honest evaluation protocol.
 - [x] Compare existing solutions and developer complaints.
 - [x] Review Amoeba collaboration model and Ryoku references.
 - [x] Write product brief, specification, logo prompt and implementation plan.
 - [x] Initialize local Git repository.
-- [x] Create public GitHub repository: https://github.com/sisyphususesarchbtw/nykt-switch
+- [x] Create public GitHub repository: https://github.com/sisyphususesarchbtw/synkai-switch
 - [x] Independent design review; resolve Fixer isolation, frozen baseline and command deduplication gaps.
 
 ## Next: working core
@@ -18,12 +22,13 @@
 - [ ] Implement local API and minimal dark case workspace.
 
 ## Presentation and submission
-- [ ] Inspect user-generated logo; keep text wordmark until then.
+- [x] Inspect supplied logo; use as large artwork and keep text wordmark for small navigation.
 - [ ] Run acceptance matrix and clean setup; record actual measurements.
 - [ ] Record real demo; update README from tested behavior.
 - [ ] Capture actual Wispr Insights scorecard.
 - [ ] Finish blog from build journal; choose publication destination.
 - [ ] Confirm submission fields, accessible links and final commit.
+- [ ] Core track only if main is working and an eligible issue is assigned; no issue currently claimed.
 
 ## Stretch, after acceptance
 - [ ] Discord bridge.

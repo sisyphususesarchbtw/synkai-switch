@@ -1,36 +1,28 @@
-# NYKT product brief
+# Synkai
+Product: Synkai. Team: Stillpoint. Plain descriptor: a collaboration room for checking AI-written fixes.
 
-## Identity
+The participant supplied the name, logo and visual references. Treat “a collective of cooperating agents” as the intended brand meaning, not a literal ancient translation. Greek kai means “and”; do not describe it as Greek for association. Existing AI businesses use Synkai/SynkAI, so use synkai-switch as the qualified repository identity. NYKT, Sakshi and Pramana are superseded.
 
-Product: NYKT (pronounced "nikt"). Team: Stillpoint. Tagline: Clarity, earned.
-NYKT is a coined name inspired by the sound of Nyx and a nocturnal atmosphere; do not invent a Greek translation. This is a project naming decision, not a claim of trademark or domain availability. Sakshi is rejected; Pramana is retired.
+## Problem and audience
+Developers reviewing agent-written fixes need evidence that the patch addresses the agreed behavior, that checks were not weakened, and which revision the evidence covers. Initial user is a solo developer coordinating Fixer and Verifier through Switch; later the same room can serve a team.
 
-## Audience and problem
+## Competitive focus
+Hook: Your CI is green. Your bug is still there.
+USP: the unchanged verifier-controlled check must detect the original defect, pass on the candidate and remain tied to exact code/environment identities. A person can inspect the whole argument in one room.
 
-Developers reviewing agent-written fixes need to know whether the proposed patch addresses the reported behavior, whether the checks were weakened, and which revision the evidence covers. Initial user is a solo developer coordinating a fixing agent and a verifier; the same workflow can later serve a team.
-
-## Mechanism
-
-A person agrees on intended behavior through Switch. The verifier freezes a check before repair; the fixing agent can change source in its own candidate workspace but cannot alter the verifier's check bundle or runner. Exact check execution on base and candidate generates inspectable evidence. A candidate change makes old evidence stale.
+Supporting features: turn agent disagreement into an executable check or explicit unanswered question; expire evidence on changed inputs; rerun deterministic checks without more model calls; bound repair attempts. Red/green testing, commit-bound CI and approval invalidation already exist. We claim a focused product combination, not exclusive technical novelty.
 
 ## Scope
+One trusted local operator, one allowlisted Python repository, pytest, one active verification, two agent identities and one real bridge. Mattermost first; Discord after core acceptance. Slack/Telegram are later. No WhatsApp integration promise.
 
-One trusted local workspace, one allowlisted Python repository, pytest, one active case, two agent identities, and one real chat bridge. Mattermost is the default because Switch's local setup supplies it. Discord is an optional second bridge after the workflow works. Slack and Telegram are future adapters. WhatsApp is not promised by the event's listed bridge set.
+Switch carries clarification, targeted handoff, feedback and evidence return. A person approves intended behavior and the frozen check; Fixer works in a separately restricted workspace; Verifier owns the check bundle and runner. A candidate cannot alter the checks against which it is evaluated.
 
-The product is not a coding IDE, a general multi-agent platform, a full CI service, a formal proof engine, or a production auto-merge bot. Repository publishing is part of project maintenance; verification does not automatically merge or deploy anything.
+VERIFIED means the named behavioral assertion failed for the expected reason on base, passed on candidate, and required adjacent checks passed. REJECTED means executable evidence disproves the candidate. INCONCLUSIVE covers setup/error/timeout/zero collection/skipped checks, a check passing on both versions and insufficient evidence. STALE marks evidence whose inputs changed. Verification supports a review decision; it is not a general correctness guarantee.
 
-## Outcomes
+## Boundaries and scale
+No new IDE, general agent OS, marketplace, vector store, billing, Kubernetes, or second orchestration framework. Start with SQLite and bounded local workers. Keep narrow bridge/provider/runner/evidence interfaces; add queue, Postgres, object storage and project isolation when demand requires them. Hostile multi-tenant execution needs a separate design.
 
-VERIFIED means the frozen behavioral assertion failed as expected on base, passed on candidate, and required regression checks passed. REJECTED means an executable behavioral or regression check disproves the candidate. INCONCLUSIVE covers setup failure, unknown assertion failure, timeout, collection failure, skipped checks, a check passing on both versions, or insufficient evidence. STALE means code or verification inputs changed after evidence was produced.
+## Success and evidence
+Reject a false fix with green repository tests; verify a real fix with the unchanged check; refuse a placebo check; expire stale results; preserve the actual source-room trail; reproduce setup from a clean clone. Publish the acceptance matrix and measured runtime/model usage. No invented savings, customers, confidence scores or win probability.
 
-## Proposed scale path
-
-Start with SQLite and bounded local workers. Introduce a durable job queue, Postgres, object storage and per-project identity only when multiple projects require them. Runner isolation, idempotent events, immutable input identities and provider/bridge adapters are useful boundaries from day one. Hosted multi-tenant execution is a later product with a separate security design, not a property of the MVP.
-
-## Success
-
-Reject a false fix that only weakens the repository tests; verify a real fix using an unchanged behavioral check; show an inconclusive execution honestly; preserve a source-room trail a judge can follow; reproduce setup from a clean clone.
-
-## Evidence
-
-Research and source links live in docs/research. Public reports are qualitative signals, not a representative survey or proof of demand. Report measured runtime and model usage only after implementation. No fabricated savings, customers, votes, or success rates.
+Detailed strategy, competitor sources, outcomes and metrics: docs/strategy-and-evaluation.md.

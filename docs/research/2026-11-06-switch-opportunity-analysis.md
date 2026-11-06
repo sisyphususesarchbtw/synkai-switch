@@ -1,6 +1,6 @@
 # Switch hackathon opportunity analysis
 
-Historical research snapshot. Naming and visual proposals below are superseded by ../../PRODUCT.md and ../../DESIGN.md: the current product is NYKT, team Stillpoint, with a dark Zen interface. Preserve the original alternatives as research context, not current requirements.
+Historical research snapshot. Naming and visual proposals below are superseded by ../../PRODUCT.md and ../../DESIGN.md: the current product is Synkai, team Stillpoint, with a raw monochrome/engraved interface. The latest competitor review and evaluation matrix are in ../strategy-and-evaluation.md. Preserve the original alternatives as research context, not current requirements.
 
 Research date: November 6, 2026, IST.
 Status: research and proposed direction; no product direction or implementation approved.
