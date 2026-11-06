@@ -3,6 +3,7 @@ import asyncio
 import json
 import sqlite3
 import time
+from contextlib import contextmanager
 from pathlib import Path
 from urllib.parse import urlencode
 from uuid import uuid4
@@ -29,10 +30,15 @@ class BridgeState:
             if 'remote_id' not in {row[1] for row in db.execute('PRAGMA table_info(outbox)')}:
                 db.execute('ALTER TABLE outbox ADD COLUMN remote_id TEXT')
 
+    @contextmanager
     def db(self):
         db = sqlite3.connect(self.path, timeout=10)
         db.row_factory = sqlite3.Row
-        return db
+        try:
+            with db:
+                yield db
+        finally:
+            db.close()
 
     def session(self, agent: str) -> dict:
         with self.db() as db:

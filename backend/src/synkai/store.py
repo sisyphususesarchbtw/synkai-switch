@@ -1,6 +1,7 @@
 """Local durable case state. Each execution is immutable and revision-bound."""
 import json
 import sqlite3
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
@@ -30,11 +31,16 @@ class Store:
                     PRIMARY KEY(room_id,receiver,command_id));
             """)
 
+    @contextmanager
     def _connect(self):
         conn = sqlite3.connect(self.path, timeout=10)
         conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys=ON")
-        return conn
+        try:
+            conn.execute("PRAGMA foreign_keys=ON")
+            with conn:
+                yield conn
+        finally:
+            conn.close()
 
     def create_case(self, behavior: str, base: str) -> dict:
         case_id = uuid4().hex

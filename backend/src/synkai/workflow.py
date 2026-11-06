@@ -2,6 +2,7 @@
 import json
 import re
 import sqlite3
+from contextlib import contextmanager
 from pathlib import Path
 
 
@@ -12,9 +13,14 @@ class WorkflowState:
         with self.db() as db:
             db.execute('CREATE TABLE IF NOT EXISTS work_cases(id TEXT PRIMARY KEY, state TEXT NOT NULL)')
 
+    @contextmanager
     def db(self):
         db = sqlite3.connect(self.path, timeout=10)
-        return db
+        try:
+            with db:
+                yield db
+        finally:
+            db.close()
 
     def propose(self, case_id: str, **fields):
         record = {'id': case_id, 'status': 'NEEDS_APPROVAL', 'attempts': 0, **fields}

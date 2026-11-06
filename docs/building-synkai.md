@@ -59,7 +59,9 @@ The [repository README](../README.md) contains the full setup. Install the commi
 
 Sign in using the generated private local login file. Report the coupon defect, approve the proposed behavior in the room, inspect the patch and checks, then accept it if satisfied. Existing credentials and agent registrations survive setup restarts. A separate labelled fixture view also demonstrates a deliberately weakened-test false fix being rejected without calling a model.
 
-The public repository includes the real patch, a two-commit Git bundle, redacted execution evidence and the independent harness. Local verification passed 65 backend tests including Docker execution, five UI logic tests and the production build. [Evaluation](evaluation.md) describes the limits and provenance.
+The public repository includes the real patch, a two-commit Git bundle, redacted execution evidence and the independent harness. Local verification passed 68 backend tests including Docker execution, five UI logic tests and the production build. [Evaluation](evaluation.md) describes the limits and provenance.
+
+Final long-running checks also exposed database connections being left to later cleanup after transactions. I added explicit closure and regression checks for all three state stores, then reran the full suite. The recorded video reflects the earlier 65-test checkpoint; the release now passes 68 backend tests.
 
 ## What I would improve next
 
