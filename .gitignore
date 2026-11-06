@@ -1,0 +1,23 @@
+# Credentials and local state
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.secrets/
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+dist/
+.tmp/
+runtime/
+artifacts/
+*.sqlite
+*.sqlite3
+*.db
+*.log
+# Capture privately first; add only curated evidence explicitly
+docs/evidence/private/
+.DS_Store
+Thumbs.db
