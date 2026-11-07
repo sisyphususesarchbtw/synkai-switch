@@ -2,7 +2,7 @@
 
 **Building SYNKAI with Switch: a coding agent, an independent verification boundary, and a human decision recorded in team chat.**
 
-*By **Stillpoint** · November 2026 · Built for [Flip the Switch](https://www.wemakedevs.org/hackathons/switch)*
+*By **Stillpoint** | November 2026 | Built for [Flip the Switch](https://www.wemakedevs.org/hackathons/switch)*
 
 ---
 
@@ -63,31 +63,31 @@ The workflow looks like this:
 
 ```text
 MATTERMOST ROOM (through Switch)
-  │
-  ├── 1. Human reports defect
-  ▼
+  |
+  +-- 1. Human reports defect
+  v
 SYNKAI VERIFIER
-  │
-  ├── 2. Presents pre-authored invariant contract
-  ├── 3. Human sends explicit approval
-  ├── 4. Reproduces original failure on base commit
-  ▼
+  |
+  +-- 2. Presents pre-authored invariant contract
+  +-- 3. Human sends explicit approval
+  +-- 4. Reproduces original failure on base commit
+  v
 Switch targeted handoff
-  ▼
+  v
 SYNKAI FIXER (Codex)
-  │
-  ├── 5. Proposes schema-constrained source patch
-  ▼
+  |
+  +-- 5. Proposes schema-constrained source patch
+  v
 Switch targeted handoff
-  ▼
+  v
 SYNKAI VERIFIER
-  │
-  ├── 6. Executes frozen check in Docker (--network=none)
-  ├── 7. Evidence returned to room
-  ▼
+  |
+  +-- 6. Executes frozen check in Docker (--network=none)
+  +-- 7. Evidence returned to room
+  v
 HUMAN OPERATOR
-  │
-  └── 8. Reviews patch and diff; sends final acceptance
+  |
+  +-- 8. Reviews patch and diff; sends final acceptance
 ```
 
 Switch is responsible for communication, agent identities, room context and message delivery. SYNKAI provides the application-specific authorization rules and the independent execution boundary.
@@ -320,9 +320,9 @@ The supervisor committed the candidate as `87ea36f955dd8d32843a30f9edddce3ea7717
 The frozen verification harness then produced:
 
 ```text
-Original revision  ──> FAILED (8100 != 9000)
-Candidate revision ──> PASSED (9000 == 9000)
-Adjacent behavior  ──> PASSED (zero-coupon & empty-cart)
+Original revision  --> FAILED (8100 != 9000)
+Candidate revision --> PASSED (9000 == 9000)
+Adjacent behavior  --> PASSED (zero-coupon & empty-cart)
 Status: VERIFIED
 ```
 
@@ -358,7 +358,7 @@ That distinction is deliberate. A trustworthy evidence system should be clear ab
 
 The project is open source on GitHub:
 
-🔗 **Repository:** [https://github.com/sisyphususesarchbtw/synkai-switch](https://github.com/sisyphususesarchbtw/synkai-switch)
+**Repository:** [https://github.com/sisyphususesarchbtw/synkai-switch](https://github.com/sisyphususesarchbtw/synkai-switch)
 
 The recorded live environment used Windows with WSL 2 and Docker. The repository also documents Linux and macOS setup commands, although the recorded live Switch/Codex run was performed on Windows.
 
@@ -472,7 +472,7 @@ Switch carries the human decisions and agent handoffs around that work. Docker a
 
 For this prototype, the problem was only a double-applied coupon. The broader design question is harder:
 
-**When a coding agent tells us a defect is fixed, who controlled the definition of “fixed”?**
+**When a coding agent tells us a defect is fixed, who controlled the definition of "fixed"?**
 
 I wanted the answer to survive beyond the agent's own response.
 
@@ -480,7 +480,7 @@ That is why I built SYNKAI.
 
 ---
 
-**Source:** [SYNKAI on GitHub](https://github.com/sisyphususesarchbtw/synkai-switch) · **Artifacts:** [Live Record](https://github.com/sisyphususesarchbtw/synkai-switch/blob/main/docs/evidence/live-switch-run.json) | [Controlled Comparison](https://github.com/sisyphususesarchbtw/synkai-switch/blob/main/docs/evidence/controlled-docker-run.json) | [Technical Evaluation](https://github.com/sisyphususesarchbtw/synkai-switch/blob/main/docs/evaluation.md)
+**Source:** [SYNKAI on GitHub](https://github.com/sisyphususesarchbtw/synkai-switch) | **Artifacts:** [Live Record](https://github.com/sisyphususesarchbtw/synkai-switch/blob/main/docs/evidence/live-switch-run.json) | [Controlled Comparison](https://github.com/sisyphususesarchbtw/synkai-switch/blob/main/docs/evidence/controlled-docker-run.json) | [Technical Evaluation](https://github.com/sisyphususesarchbtw/synkai-switch/blob/main/docs/evaluation.md)
 
-*Built by Stillpoint for the WeMakeDevs × SandboxAQ Flip the Switch Hackathon · #HowISwitch · #SwitchAI*
+*Built by Stillpoint for the WeMakeDevs x SandboxAQ Flip the Switch Hackathon | #HowISwitch | #SwitchAI*
 
