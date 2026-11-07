@@ -26,7 +26,7 @@ Verify that the public default branch contains the tested product before enterin
 
 ## Demo video
 
-Required: a public/unlisted YouTube or Loom link under three minutes. Use [the finished recording script](demo-script.md). **A hosted video link is still required; do not enter a placeholder or claim submission is complete without it.**
+Required: a public/unlisted YouTube or Loom link under three minutes. Use [the finished recording script](https://github.com/sisyphususesarchbtw/synkai-switch/blob/main/docs/demo-script.md). **A hosted video link is still required; do not enter a placeholder or claim submission is complete without it.**
 
 ## Live demo
 
@@ -34,7 +34,7 @@ Leave blank. The operational app runs locally; no publicly hosted backend is cla
 
 ## Blog
 
-The finished [build article](building-synkai.md) is in this public repository. Its rendered public URL after release is:
+The finished [build article](https://github.com/sisyphususesarchbtw/synkai-switch/blob/main/docs/building-synkai.md) is in this public repository. Its rendered public URL after release is:
 
 https://github.com/sisyphususesarchbtw/synkai-switch/blob/main/docs/building-synkai.md
 

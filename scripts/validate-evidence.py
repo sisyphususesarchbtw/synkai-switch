@@ -1,14 +1,21 @@
-"""Validate the cryptographic integrity and stage consistency of Synkai evidence records."""
+"""Validate the integrity and stage consistency of Synkai evidence records.
+
+Fails closed on any invalid, tampered, or missing record.
+Explicitly distinguishes verifiable integrity from checks that cannot be performed on redacted artifacts.
+"""
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HARNESS_FILES = ("check.py", "pytest.ini", "reporter.py")
+HEX_SHA_REGEX = re.compile(r"^[a-f0-9]{40,64}$")
 
 
 def compute_harness_digest(harness_dir: Path) -> str:
+    """Compute the SHA-256 digest of the frozen harness files."""
     parts = []
     for name in HARNESS_FILES:
         path = harness_dir / name
@@ -18,82 +25,131 @@ def compute_harness_digest(harness_dir: Path) -> str:
     return hashlib.sha256(b"".join(parts)).hexdigest()
 
 
-def validate_evidence_payload(name: str, evidence: dict, harness_dir: Path, is_redacted: bool) -> bool:
-    print(f"\n  Checking evidence record: {name}")
+def validate_evidence_payload(name: str, evidence: dict, harness_dir: Path, is_redacted: bool) -> tuple[bool, str]:
+    """Validate a single evidence dictionary. Returns (success: bool, reason: str)."""
     identity = evidence.get("identity")
     fingerprint = evidence.get("fingerprint")
 
-    if not identity or not isinstance(identity, dict):
-        print("    [FAIL] Missing or invalid 'identity' dictionary in evidence")
-        return False
+    if not isinstance(identity, dict):
+        return False, f"Missing or non-dict 'identity' in record: {name}"
 
-    # Check harness digest
+    if not fingerprint or not isinstance(fingerprint, str) or not HEX_SHA_REGEX.match(fingerprint):
+        return False, f"Missing or malformed 'fingerprint' in record: {name}"
+
+    # 1. Verify frozen harness digest (must match exactly)
     expected_harness = identity.get("harness")
-    current_harness = compute_harness_digest(harness_dir)
-    if expected_harness != current_harness:
-        print(f"    [WARN] Current harness ({current_harness[:16]}...) differs from recorded check ({expected_harness[:16]}...)")
-    else:
-        print(f"    [PASS] Frozen harness digest verified: {current_harness[:16]}...")
+    if not expected_harness or not isinstance(expected_harness, str):
+        return False, f"Missing 'identity.harness' in record: {name}"
 
-    # Fingerprint check
+    try:
+        current_harness = compute_harness_digest(harness_dir)
+    except FileNotFoundError as exc:
+        return False, str(exc)
+
+    if expected_harness != current_harness:
+        return False, (
+            f"Harness mismatch in {name}!\n"
+            f"        Recorded: {expected_harness}\n"
+            f"        Computed: {current_harness}"
+        )
+
+    # 2. Check fingerprint
     if is_redacted:
-        print(f"    [PASS] Fingerprint recorded: {fingerprint[:16]}... (pre-redaction execution hash preserved)")
+        # Honest disclosure: Redacted public evidence substituted local paths.
+        # The fingerprint cannot be recomputed from '<local-workspace>' strings.
+        # We verify that commit hashes within identity are valid hex SHAs.
+        base_sha = identity.get("base")
+        cand_sha = identity.get("candidate")
+        if not base_sha or not HEX_SHA_REGEX.match(base_sha):
+            return False, f"Invalid base commit SHA in redacted record: {name}"
+        if not cand_sha or not HEX_SHA_REGEX.match(cand_sha):
+            return False, f"Invalid candidate commit SHA in redacted record: {name}"
+        print(f"    [NOTE: REDACTED] {name}: Local path redacted for publication. Fingerprint ({fingerprint[:16]}...) was generated pre-redaction and cannot be recomputed from published text.")
     else:
+        # Unredacted: must recompute and match exactly
         recomputed = hashlib.sha256(json.dumps(identity, sort_keys=True).encode("utf-8")).hexdigest()
         if recomputed != fingerprint:
-            print(f"    [FAIL] Fingerprint mismatch: {fingerprint} vs {recomputed}")
-            return False
+            return False, (
+                f"Fingerprint mismatch in {name}!\n"
+                f"        Recorded: {fingerprint}\n"
+                f"        Computed: {recomputed}"
+            )
         print(f"    [PASS] Fingerprint verified: {fingerprint[:16]}...")
 
-    # Stage progression check
-    stages = evidence.get("stages", [])
-    if len(stages) != 3:
-        print(f"    [FAIL] Expected 3 verification stages, found {len(stages)}")
-        return False
+    # 3. Verify stage progression (must strictly match allowed criteria)
+    stages = evidence.get("stages")
+    if not isinstance(stages, list) or len(stages) != 3:
+        return False, f"Expected exactly 3 verification stages in {name}, found {len(stages) if isinstance(stages, list) else 'none'}"
 
-    stage_summary = [(s.get("name"), s.get("outcome")) for s in stages]
-    stage_outcomes = [s.get("outcome") for s in stages]
-    print(f"    [INFO] Stages: {stage_summary}")
+    stage_outcomes = [s.get("outcome") for s in stages if isinstance(s, dict)]
+    expected_names = ["Original behavior", "Candidate behavior", "Adjacent behavior"]
+    actual_names = [s.get("name") for s in stages if isinstance(s, dict)]
 
+    if actual_names != expected_names:
+        return False, f"Stage name sequence mismatch in {name}: {actual_names} != {expected_names}"
+
+    # Strict stage validation:
+    # VERIFIED repair: Base must FAIL, Candidate must PASS, Adjacent must PASS
+    # REJECTED false-fix: Base must FAIL, Candidate must FAIL, Adjacent must PASS
     if stage_outcomes == ["failed", "passed", "passed"]:
-        print("    [PASS] Criteria: Base FAILED -> Candidate PASSED -> Adjacent PASSED (VERIFIED repair)")
+        print(f"    [PASS] Stages valid: Base FAILED -> Candidate PASSED -> Adjacent PASSED (VERIFIED repair)")
     elif stage_outcomes == ["failed", "failed", "passed"]:
-        print("    [PASS] Criteria: Base FAILED -> Candidate FAILED -> Adjacent PASSED (REJECTED false-fix)")
+        print(f"    [PASS] Stages valid: Base FAILED -> Candidate FAILED -> Adjacent PASSED (REJECTED false-fix)")
     else:
-        print(f"    [INFO] Outcome sequence: {stage_outcomes}")
+        return False, f"Invalid or unexpected stage progression in {name}: {stage_outcomes}"
 
-    return True
+    return True, "OK"
 
 
 def validate_file(evidence_path: Path, harness_dir: Path) -> bool:
-    print(f"\nValidating evidence file: {evidence_path.relative_to(ROOT)}")
+    """Validate an evidence file. Fails closed on any error."""
+    print(f"\nValidating evidence file: {evidence_path.name}")
     if not evidence_path.is_file():
-        print(f"  [FAIL] File does not exist: {evidence_path}")
+        print(f"  [FAIL] Missing required evidence file: {evidence_path}")
         return False
 
     try:
         data = json.loads(evidence_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        print(f"  [FAIL] Invalid JSON: {exc}")
+    except (json.JSONDecodeError, OSError) as exc:
+        print(f"  [FAIL] Unable to parse JSON file {evidence_path}: {exc}")
         return False
 
-    # Check if live single record
     if "record" in data:
         is_redacted = bool(data.get("redactions"))
-        return validate_evidence_payload(data.get("scenario", "Live Run"), data["record"], harness_dir, is_redacted)
+        scenario = data.get("scenario", "Live Run")
+        ok, reason = validate_evidence_payload(scenario, data["record"], harness_dir, is_redacted)
+        if not ok:
+            print(f"  [FAIL] {reason}")
+            return False
+        return True
 
-    # Check if controlled fixture with multiple runs
     if "runs" in data:
         all_ok = True
         for i, run in enumerate(data["runs"]):
             run_name = f"{run.get('candidate_type', f'run-{i}')} ({run.get('outcome', 'UNKNOWN')})"
             is_redacted = bool(run.get("path_redacted"))
-            if not validate_evidence_payload(run_name, run["evidence"], harness_dir, is_redacted):
+            ok, reason = validate_evidence_payload(run_name, run.get("evidence", {}), harness_dir, is_redacted)
+            if not ok:
+                print(f"  [FAIL] {reason}")
                 all_ok = False
         return all_ok
 
-    print("  [FAIL] Unrecognized evidence file structure")
+    print(f"  [FAIL] Unrecognized evidence schema in {evidence_path}")
     return False
+
+
+def run_all(evidence_files: list[Path], harness_dir: Path) -> bool:
+    """Validate all required evidence files. Fails closed if any file fails or is missing."""
+    if not evidence_files:
+        print("[FAIL] No evidence files specified for validation.")
+        return False
+
+    all_passed = True
+    for ev_file in evidence_files:
+        if not validate_file(ev_file, harness_dir):
+            all_passed = False
+
+    return all_passed
 
 
 def main():
@@ -103,19 +159,12 @@ def main():
         ROOT / "docs" / "evidence" / "controlled-docker-run.json",
     ]
 
-    all_passed = True
-    for ev_file in evidence_files:
-        if ev_file.exists():
-            if not validate_file(ev_file, harness_dir):
-                all_passed = False
-        else:
-            print(f"\n[SKIP] Evidence file not found: {ev_file.relative_to(ROOT)}")
-
-    if all_passed:
-        print("\nAll tested evidence records verified successfully.")
+    passed = run_all(evidence_files, harness_dir)
+    if passed:
+        print("\nAll required evidence records verified successfully.")
         sys.exit(0)
     else:
-        print("\nOne or more evidence checks failed.")
+        print("\nOne or more evidence verification checks failed.")
         sys.exit(1)
 
 

@@ -26,7 +26,7 @@ This is one successful live case, an earlier failed coding attempt, and two sepa
 
 Tests cover quoted/agent/wrong-room approvals, unaddressed messages, copied commands without sender receipts, duplicate/concurrent delivery, durable cursors and registration reuse, budget exhaustion, process locking, interruption, unrelated ancestry, file/tree allowlists, candidate test/config attacks, a check already passing on base, setup/runtime errors, stale identities, contradictory replays, persistence and browser-origin/session protection.
 
-The local full run passed 68 backend tests with real Docker, 5 UI logic tests and the production build. An upstream Starlette TestClient/httpx warning remains visible. Update this count if release review adds tests.
+The local full run passed 76 backend tests (77 with real Docker), 5 UI logic tests and the production build. An upstream Starlette TestClient/httpx warning remains visible. Negative tests verify fail-closed validation on tampered digests, fingerprints, invalid stage progressions and missing files.
 
 ## Limits
 

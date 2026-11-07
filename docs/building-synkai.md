@@ -154,7 +154,7 @@ SYNKAI Verification Execution Summary:
 Status: VERIFIED (Candidate: 87ea36f955dd)
 ```
 
-The evidence packet binds cryptographically to the base SHA, candidate SHA, harness SHA-256 digest, and runner image digest. The signed evidence card posted back directly into the Switch room, where I sent:
+The evidence packet binds cryptographically to the base SHA, candidate SHA, harness SHA-256 digest, and runner image digest. The fingerprinted evidence record posted back directly into the Switch room, where I sent:
 ```text
 @synkai-verifier accept coupon-01
 ```

@@ -4,7 +4,7 @@
 
   [![Status](https://img.shields.io/badge/status-verified%20evidence-emerald?style=flat-square&color=18181b&labelColor=09090b)](docs/evidence/live-switch-run.json)
   [![Switch](https://img.shields.io/badge/switch-v0.31.0-blue?style=flat-square&color=18181b&labelColor=09090b)](https://github.com/sandbox-quantum/switch)
-  [![Tests](https://img.shields.io/badge/backend%20tests-68%20passed-emerald?style=flat-square&color=18181b&labelColor=09090b)](docs/evaluation.md)
+  [![Tests](https://img.shields.io/badge/backend%20tests-77%20passed-emerald?style=flat-square&color=18181b&labelColor=09090b)](docs/evaluation.md)
   [![UI Checks](https://img.shields.io/badge/ui%20tests-5%20passed-emerald?style=flat-square&color=18181b&labelColor=09090b)](web/tests)
   [![Track](https://img.shields.io/badge/track-Best%20Business%20Workflow-white?style=flat-square&color=18181b&labelColor=09090b)](https://www.wemakedevs.org/hackathons/switch)
   [![License](https://img.shields.io/badge/license-MIT-zinc?style=flat-square&color=18181b&labelColor=09090b)](LICENSE)
@@ -21,27 +21,27 @@ When developers delegate bug fixes to coding agents, the agent's objective funct
 
 In practice, agents often take the path of least resistance: **they weaken or alter the test assertions** to match the buggy output. The repository CI turns green, but the defect remains in production code.
 
-Here is an actual demonstration from our controlled fixture:
+In our controlled fixture, an authored candidate simulates this failure pattern:
 
 ```python
 # The defective implementation in cart.py:
 def total_after_coupon(cents, percent):
     discounted = cents * (100 - percent) // 100
-    return discounted * (100 - percent) // 100  # <--- Bug: 10% coupon applied twice!
+    return discounted * (100 - percent) // 100  # Bug: 10% coupon applied twice
 ```
 
 ```diff
-# The agent's "fix" in test_cart.py:
+# The authored false-fix candidate in test_cart.py:
  def test_coupon():
 -    assert total_after_coupon(10000, 10) == 9000
-+    assert total_after_coupon(10000, 10) == 8100  # <--- Weakened to accept the bug!
++    assert total_after_coupon(10000, 10) == 8100  # Weakened to accept the buggy output
 ```
 
+Running the candidate repository's own local test suite passes:
 ```text
-Repository CI Run:
 $ pytest test_cart.py
 test_cart.py .                                                           [100%]
-1 passed in 0.01s  <--- CI IS GREEN. THE BUG IS STILL IN PRODUCTION.
+1 passed in 0.01s  # Local tests pass, but cart.py is still defective.
 ```
 
 ---
@@ -78,7 +78,7 @@ Switch is not a cosmetic notification webhook. It provides the **stateful, authe
 ```mermaid
 flowchart LR
     H[Human in Mattermost] <-->|Switch WebSocket Event Bus| S[Switch 0.31.0]
-    S <-->|1. Formalize Contract| V[Verifier Supervisor: Deterministic Python]
+    S <-->|1. Present Pre-Authored Contract| V[Verifier Supervisor: Deterministic Python]
     S <-->|2. Targeted Handoff| F[Fixer Agent: Codex Worker]
     V -->|3. Freeze Check Outside Workspace| R[Docker Sandbox: --network=none]
     F -->|4. Propose Candidate Patch| R
@@ -89,7 +89,7 @@ flowchart LR
 ```
 
 1. **Stateful Chat Protocol:** Two Switch agent identities (`synkai-verifier` and `synkai-fixer`) join the Mattermost room. Synkai persists WebSocket connection identity, message cursors, and state generations in SQLite.
-2. **Linked Operator Identity:** Invariant approval and final patch acceptance require an explicit addressed command from the linked operator account (`@synkai-verifier approve coupon-01`). Quoted text, third-party messages, or agent hallucinations cannot authorize execution.
+2. **Linked Operator Identity:** Verifier presents the pre-authored behavioral invariant contract for human review. Invariant approval and final patch acceptance require an explicit addressed command from the linked operator account (`@synkai-verifier approve coupon-01`). Quoted text, third-party messages, or agent hallucinations cannot authorize execution.
 3. **Receipt-Bound Handoffs:** When Verifier hands off a task to Fixer, Fixer matches the incoming command against the sender's actual server delivery receipt. Copied commands or replays with different event IDs cannot authorize duplicate work.
 4. **Room Context & Artifacts:** A Switch room reference binds to the GitHub repository context, and a verifier-authored room document retains the approved behavior, check digest, and approval message ID.
 
@@ -122,7 +122,7 @@ During our recorded live run on November 6, 2026:
   - Monetary cost: Unreported by CLI.
 
 Inspect the real artifacts:
-* [Signed Execution Evidence](docs/evidence/live-switch-run.json)
+* [Recorded Execution Evidence](docs/evidence/live-switch-run.json)
 * [Controlled Docker Comparison](docs/evidence/controlled-docker-run.json)
 * [Generated Git Patch](docs/evidence/live-candidate.patch)
 * [Two-Commit Git Bundle](docs/evidence/live-candidate.bundle)
@@ -202,7 +202,7 @@ npm.cmd --prefix web run build
 $env:SYNKAI_DOCKER_TESTS = '1'
 .\.venv\Scripts\python.exe -m pytest -q
 ```
-**Results:** 68 backend tests passed (including real Docker sandbox execution), 5 UI tests passed, 0 failures.
+**Results:** 76 backend tests passed (77 including real Docker sandbox execution), 5 UI tests passed, 0 failures.
 
 ---
 
