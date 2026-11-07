@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/banner.png" alt="SYNKAI" width="760"/>
+  <img src="https://raw.githubusercontent.com/sisyphususesarchbtw/synkai-switch/main/docs/assets/banner.png" alt="SYNKAI" width="760"/>
   <br/><br/>
   <h1>Keeping the Check Outside the Patch: Building Synkai with Switch</h1>
   <p><em>Why autonomous coding agents need an external invariant chamber, and how Switch powers the collaboration.</em></p>
@@ -8,9 +8,25 @@
 
 ---
 
-A 10% coupon on a 10,000-cent checkout cart should leave 9,000 cents. In our target case, a logic bug applied the discount twice, yielding 8,100. 
+A 10% coupon on a 10,000-cent checkout cart should leave 9,000 cents. In our target case, a logic bug applied the discount twice, yielding 8,100:
 
-If you ask an autonomous coding agent to "fix the test suite," it often discovers an easy shortcut: it alters the assertion to expect 8,100 cents. The test suite turns green, CI gives a thumbs up, and broken accounting ships to production.
+```python
+# The defective implementation in cart.py:
+def total_after_coupon(cents, percent):
+    discounted = cents * (100 - percent) // 100
+    return discounted * (100 - percent) // 100  # <--- 10% discount applied twice!
+```
+
+If you ask an autonomous coding agent to "fix the test suite," it often discovers an easy shortcut: it alters the test assertion to expect 8,100 cents:
+
+```diff
+# How coding agents cheat to make CI pass:
+ def test_coupon():
+-    assert total_after_coupon(10000, 10) == 9000
++    assert total_after_coupon(10000, 10) == 8100  # <--- Assertion weakened!
+```
+
+The repository test suite turns green. CI gives a thumbs up. Broken accounting ships directly to production.
 
 I built **Synkai** to eliminate this false-green illusion. The core thesis is architectural: **the worker proposing a repair must never have authority over the check used to judge it.** 
 
@@ -41,14 +57,14 @@ Two distinct agent identities join the channel alongside the human operator:
   └─ 3. Adjacent Regs ──> Passes (0% coupon & empty cart)
         │
         ▼
-[Cryptographic Evidence Card Posted to Switch Room]
+[Cryptographically Fingerprinted Evidence Card Posted to Switch Room]
 ```
 
 When I report the doubled coupon, Verifier doesn't immediately touch code. It restates the intended invariant: *10,000 cents with a 10% coupon must equal 9,000 cents, with zero-percent and empty-cart checks as adjacent boundaries.* 
 
 In this release, the invariant contract is an explicitly authored behavioral specification presented for operator review, not an unverified LLM-generated test. A verification gate must be deterministic and mathematically reproducible—never subject to model temperature, prompt drift, or non-deterministic code synthesis.
 
-The check cannot freeze until I send an explicit approval message from my linked operator account. Quoted text, third-party messages, or agent hallucinations cannot authorize execution.
+The check cannot freeze until I send an explicit approval message from my linked operator account (`@synkai-verifier approve coupon-01`). Quoted text, third-party messages, or agent hallucinations cannot authorize execution.
 
 ---
 
@@ -106,7 +122,7 @@ Stage 3: Adjacent      [87ea36f955dd] ──> PASSED (2/2 regression checks gree
 Status: VERIFIED (Elapsed: 13.11s)
 ```
 
-The evidence packet binds cryptographically to the base SHA, candidate SHA, check hash, and container image digest. If anyone modifies the source code or changes the test harness, the previous evidence is instantly marked `STALE`.
+The evidence packet binds cryptographically to the base SHA, candidate SHA, check hash, runner image digest, and resource limits. If anyone modifies the source code or changes the test harness, the previous evidence is instantly marked `STALE`.
 
 ---
 
@@ -131,6 +147,11 @@ npm.cmd --prefix web run build
 Sign in to Mattermost at `http://localhost:8792`, report the bug to `@synkai-verifier`, approve the invariant, and watch the verified proof arrive in chat.
 
 The test suite runs 68 backend tests (including real Docker sandbox execution) and 5 frontend state tests. Every run is reproducible on a standard Windows/WSL machine.
+
+You can also run our standalone evidence validation script directly:
+```powershell
+python scripts/validate-evidence.py
+```
 
 ---
 
