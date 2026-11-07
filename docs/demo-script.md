@@ -1,22 +1,19 @@
-# Synkai Demo Video Storyboard (Under 3 Minutes)
+# SYNKAI Demo Video Storyboard (2 Minutes 30 Seconds)
 
-The authenticated submission form requires a public or unlisted **YouTube or Loom** video under 3 minutes showing agents working in real chat. 
-
-Target Duration: **2 minutes 30 seconds**.  
-Tone: **Calm, authoritative, deliberate, deep narrator voice.** Clear pacing with no rushed cadence.
+Target Duration: **2 minutes 30 seconds**  
+Style: **Direct, observable evidence first.** No rhetorical questions or artificial drama. Calm, deep narrator cadence.
 
 ---
 
-### Timecoded Storyboard & Spoken Lines
+### Timecoded Sequence & Narration
 
-| Timecode | Screen Display | Narration (Spoken by Operator) | Visual Action |
+| Timecode | Screen Display | Spoken Audio (Narration) | Visual Cues |
 | :--- | :--- | :--- | :--- |
-| **0:00 – 0:22** | **Dark Zen Synkai UI**<br/>(Full screen, obsidian void, S Y N K A I brandmark visible) | *"Every developer using AI coding agents knows the dirty secret of modern CI: your tests can turn green, and your bug is still in production. Coding agents optimize to pass checks—even if that means silently tampering with the assertions. Synkai fixes this at the root."* | Pan over the obsidian UI, showing the clean status headers and invariant checklist. |
-| **0:22 – 0:45** | **Terminal & Self-Sufficient Setup**<br/>(Split or quick cut to PowerShell) | *"Everything here is self-sufficient. With one setup command, we launch Switch 0.31.0, our isolated Docker workers, and register two specialized agent identities: Synkai Fixer and Synkai Verifier."* | Show `setup-switch.ps1` starting server and registering agents cleanly. |
-| **0:45 – 1:18** | **Live Mattermost Room (Switch Control Plane)**<br/>(Mattermost `#synkai-evidence-room`) | *"Here is our live Switch room. I report a double-discount defect: a 10% coupon applied twice. Verifier formalizes the invariant—10,000 cents must become 9,000—and pauses for my sovereign approval. I approve it. The check is now frozen outside the codebase."* | Show the bug report message, Verifier's proposal, and the operator sending `@synkai-verifier approve coupon-01`. |
-| **1:18 – 1:42** | **Targeted Handoff & Docker Sandbox**<br/>(Mattermost & Docker worker logs) | *"Switch coordinates the targeted handoff. Fixer generates a clean Python repair using Codex in a restricted container. Notice: Fixer has zero access to the verifier's test harness. It cannot rewrite the rules or grade its own exam."* | Show targeted handoff in chat, Fixer's proposed diff, and supervisor commit. |
-| **1:42 – 2:08** | **Synkai Evidence Chamber**<br/>(Return to Synkai React UI) | *"The result is absolute proof. On the base revision, the frozen check fails as expected: 8,100 versus 9,000. On the candidate patch, it passes. Zero-coupon and empty-cart regressions pass too. Verification took 13.1 seconds in an isolated, network-disabled container."* | Click into the dual-chamber view showing Base Failed, Candidate Passed, and Adjacent Checks Green. |
-| **2:08 – 2:32** | **Acceptance in Chat & Wrap-up**<br/>(Mattermost & GitHub Repo) | *"The evidence card posts back into our Switch room. With one message, I accept the verified patch. This is Stillpoint building Synkai for Flip the Switch: honest agents, human sovereignty, and invariant evidence you can trust."* | Send `@synkai-verifier accept coupon-01` in chat, quick cut to GitHub repo with 68 passing tests. |
+| **0:00 – 0:20** | **The False-Green Demonstration**<br/>(Split screen: code diff + terminal) | *"This patch makes the test pass by changing the expected result from 9,000 to 8,100. The bug is still there. Ordinary CI turns green, but SYNKAI rejects it because the coding agent cannot rewrite the independent check."* | Highlight the diff weakening `assert == 9000` to `assert == 8100`. Show `pytest` green, then show Synkai marking it **REJECTED**. |
+| **0:20 – 0:35** | **The Verification Boundary**<br/>(Synkai Dark Zen interface) | *"SYNKAI splits authority. The worker changing the code has zero access to the verifier's test harness. The check must fail on the original commit, pass on the candidate, and pass adjacent regressions in an isolated container."* | Pan over the obsidian UI, showing the invariant contract and stage indicators. |
+| **0:35 – 1:27** | **Live Switch Room Collaboration**<br/>(Mattermost `#synkai-evidence-room`) | *"Here is our live Switch room. I report a double-coupon defect. Verifier formalizes the behavioral invariant and pauses for approval. I approve it using my linked operator account. Switch coordinates a targeted handoff to Fixer, which invokes Codex in a restricted Docker worker. Fixer proposes a source repair, and the supervisor commits candidate `87ea36f9`."* | Show report message, Verifier proposal, operator sending `@synkai-verifier approve coupon-01`, Switch handoff receipt, and candidate commit creation. |
+| **1:27 – 2:05** | **Three-Stage Invariant Execution**<br/>(Dual-chamber evidence view) | *"Now Verifier tests the candidate in an isolated container with network disabled. Stage one: the frozen check fails on the original commit—8,100 versus 9,000. Stage two: the candidate passes. Stage three: zero-coupon and empty-cart regressions pass. Verification took 13.1 seconds."* | Show stage progression: Original Failed, Candidate Passed, Adjacent Passed. Show raw execution output and SHA-256 input fingerprint. |
+| **2:05 – 2:30** | **Room Acceptance & Conclusion**<br/>(Mattermost & GitHub repo) | *"Evidence posts back into our Switch room. I send `@synkai-verifier accept coupon-01` to seal the decision. All 68 backend tests pass, including Docker execution. This is Stillpoint building SYNKAI for Flip the Switch: independent evidence for agentic code repairs."* | Send accept command in chat, show the final verified badge and clean GitHub repository. |
 
 ---
 
@@ -34,5 +31,5 @@ Tone: **Calm, authoritative, deliberate, deep narrator voice.** Clear pacing wit
 
 1. In Wispr Flow desktop app, navigate to: **Insights → Your usage → Share**.
 2. Export the official graphic card (PNG or JPG).
-3. Confirm stats are visible: ~6,756 words, 132 WPM, top 0.4%, 963 fixes.
+3. Confirm stats are visible (cumulative words dictated, WPM, fixes).
 4. Upload the exported image directly in the hackathon submission form.

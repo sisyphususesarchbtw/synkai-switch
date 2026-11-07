@@ -46,6 +46,8 @@ Two distinct agent identities join the channel alongside the human operator:
 
 When I report the doubled coupon, Verifier doesn't immediately touch code. It restates the intended invariant: *10,000 cents with a 10% coupon must equal 9,000 cents, with zero-percent and empty-cart checks as adjacent boundaries.* 
 
+In this release, the invariant contract is an explicitly authored behavioral specification presented for operator review, not an unverified LLM-generated test. A verification gate must be deterministic and mathematically reproducible—never subject to model temperature, prompt drift, or non-deterministic code synthesis.
+
 The check cannot freeze until I send an explicit approval message from my linked operator account. Quoted text, third-party messages, or agent hallucinations cannot authorize execution.
 
 ---
