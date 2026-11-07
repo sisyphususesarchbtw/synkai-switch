@@ -110,3 +110,4 @@ def test_actual_repo_evidence_files_pass(harness_dir):
         ROOT / "docs" / "evidence" / "controlled-docker-run.json",
     ]
     assert val_ev.run_all(evidence_files, harness_dir) is True
+
