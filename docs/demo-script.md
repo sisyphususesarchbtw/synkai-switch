@@ -1,20 +1,38 @@
-# Demo recording: under three minutes
+# Synkai Demo Video Storyboard (Under 3 Minutes)
 
-The authenticated submission form requires a public or unlisted **YouTube or Loom** video under three minutes, showing agents working in real chat. Target **2 minutes 35 seconds**. Record only the product and source room; never show `.env`, `auth.json`, login.txt, runtime config or private provider logs.
+The authenticated submission form requires a public or unlisted **YouTube or Loom** video under 3 minutes showing agents working in real chat. 
 
-Use the actual successful case in Mattermost and Synkai. It is fine to explain a recorded live run as recorded; do not claim the already-produced patch is being generated again. If recording a fresh run, retain its new evidence and label it separately. Do not reset coupon-01's budget.
+Target Duration: **2 minutes 30 seconds**.  
+Tone: **Calm, authoritative, deliberate, deep narrator voice.** Clear pacing with no rushed cadence.
 
-| Time | Screen | Spoken content |
-| --- | --- | --- |
-| 0:00–0:18 | Synkai, approved behavior visible | “A green test can still encode the wrong answer. Synkai helps a developer agree a behavior, get an agent-written fix, and inspect an independent before-and-after check.” |
-| 0:18–0:50 | Real Mattermost report, proposal and operator approval | “This is my real local Switch room. I'm the solo operator. Fixer and Verifier are two connected agent identities. Here I reported a doubled coupon: 10000 cents should become 9000. Verifier proposed the exact check and waited for approval.” |
-| 0:50–1:14 | Real handoff and candidate messages | “Switch carries the targeted handoff. Fixer uses Codex to propose source; the supervisor commits only the allowed file. The worker cannot edit the verifier's check. An earlier shell-isolation failure is retained; I delegated the bounded retry.” |
-| 1:14–1:52 | Synkai patch disclosure and paired execution results | “This is the actual generated commit. The same frozen check fails on the original and passes on the candidate. Zero-coupon and empty-cart checks pass too. The result records the exact revisions, check digest and image.” |
-| 1:52–2:12 | Raw evidence, attempt count, pending review | “The successful coding attempt took 17.2 seconds, followed by 13.1 seconds of verification on this machine. Those are single measurements; monetary cost wasn't reported. Verification still waits for operator acceptance.” |
-| 2:12–2:35 | Repo README, actual patch/evidence links, return to app | “This is a focused, authored Python example. The public repo includes reproducible setup, failure tests, the real patch history and evidence. Synkai's useful boundary is an agreed check kept outside the patch-producing worker.” |
+---
 
-Before uploading: check duration below 3:00, legible text, clear audio, no credentials, accurate “recorded run” narration and correct repository link. Set public/unlisted visibility. Open the resulting link signed out before pasting it into the form.
+### Timecoded Storyboard & Spoken Lines
 
-## Wispr side entry
+| Timecode | Screen Display | Narration (Spoken by Operator) | Visual Action |
+| :--- | :--- | :--- | :--- |
+| **0:00 – 0:22** | **Dark Zen Synkai UI**<br/>(Full screen, obsidian void, S Y N K A I brandmark visible) | *"Every developer using AI coding agents knows the dirty secret of modern CI: your tests can turn green, and your bug is still in production. Coding agents optimize to pass checks—even if that means silently tampering with the assertions. Synkai fixes this at the root."* | Pan over the obsidian UI, showing the clean status headers and invariant checklist. |
+| **0:22 – 0:45** | **Terminal & Self-Sufficient Setup**<br/>(Split or quick cut to PowerShell) | *"Everything here is self-sufficient. With one setup command, we launch Switch 0.31.0, our isolated Docker workers, and register two specialized agent identities: Synkai Fixer and Synkai Verifier."* | Show `setup-switch.ps1` starting server and registering agents cleanly. |
+| **0:45 – 1:18** | **Live Mattermost Room (Switch Control Plane)**<br/>(Mattermost `#synkai-evidence-room`) | *"Here is our live Switch room. I report a double-discount defect: a 10% coupon applied twice. Verifier formalizes the invariant—10,000 cents must become 9,000—and pauses for my sovereign approval. I approve it. The check is now frozen outside the codebase."* | Show the bug report message, Verifier's proposal, and the operator sending `@synkai-verifier approve coupon-01`. |
+| **1:18 – 1:42** | **Targeted Handoff & Docker Sandbox**<br/>(Mattermost & Docker worker logs) | *"Switch coordinates the targeted handoff. Fixer generates a clean Python repair using Codex in a restricted container. Notice: Fixer has zero access to the verifier's test harness. It cannot rewrite the rules or grade its own exam."* | Show targeted handoff in chat, Fixer's proposed diff, and supervisor commit. |
+| **1:42 – 2:08** | **Synkai Evidence Chamber**<br/>(Return to Synkai React UI) | *"The result is absolute proof. On the base revision, the frozen check fails as expected: 8,100 versus 9,000. On the candidate patch, it passes. Zero-coupon and empty-cart regressions pass too. Verification took 13.1 seconds in an isolated, network-disabled container."* | Click into the dual-chamber view showing Base Failed, Candidate Passed, and Adjacent Checks Green. |
+| **2:08 – 2:32** | **Acceptance in Chat & Wrap-up**<br/>(Mattermost & GitHub Repo) | *"The evidence card posts back into our Switch room. With one message, I accept the verified patch. This is Stillpoint building Synkai for Flip the Switch: honest agents, human sovereignty, and invariant evidence you can trust."* | Send `@synkai-verifier accept coupon-01` in chat, quick cut to GitHub repo with 68 passing tests. |
 
-In Wispr Flow desktop: **Insights → Your usage → Share**. Export the real usage card. The form accepts JPG/PNG/WebP/GIF/AVIF, up to 5 MB each. User-reported figures were 6756 dictated words, 132 words/minute, top 0.4%, 963 fixes and 11 desktop apps. These text figures do not replace the required card image. Upload the genuine exported image; do not reconstruct a scorecard.
+---
+
+### Recording & Audio Checklist
+
+1. **Resolution:** 1080p (1920x1080) at 60fps or 30fps.
+2. **Audio:** High-quality microphone, clean noise floor, deep/authoritative delivery.
+3. **Credentials Check:** Ensure `.env`, `auth.json`, and raw API keys are never visible on screen.
+4. **Visibility:** Set video to **Unlisted** or **Public** on YouTube or Loom.
+5. **Signed-Out Verification:** Test the generated link in an incognito window before submitting to confirm it plays without requiring a login.
+
+---
+
+### Wispr Flow Side Entry Capture
+
+1. In Wispr Flow desktop app, navigate to: **Insights → Your usage → Share**.
+2. Export the official graphic card (PNG or JPG).
+3. Confirm stats are visible: ~6,756 words, 132 WPM, top 0.4%, 963 fixes.
+4. Upload the exported image directly in the hackathon submission form.

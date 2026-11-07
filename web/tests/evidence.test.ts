@@ -24,5 +24,6 @@ test('a live failure offers a bounded retry and never acceptance', () => {
 test('human decisions are explicit at the beginning and end', () => {
   assert.equal(liveAction('NEEDS_APPROVAL', 0, 'coupon-01').command, '@synkai-verifier approve coupon-01')
   assert.equal(liveAction('AWAITING_REVIEW', 1, 'coupon-01').command, '@synkai-verifier accept coupon-01')
+  assert.equal(liveAction('STALE', 1, 'coupon-01').command, null)
   assert.equal(liveAction('CLOSED', 1, 'coupon-01').command, null)
 })
